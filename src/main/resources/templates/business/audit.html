@@ -1,0 +1,190 @@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">企业名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="businessName" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">企业类型</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="businessTrade" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 200px">社会信用统一代码</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="creditCode" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-xs " lay-event="pass">通过</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="forbidden">禁用</a>
+            <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="detail">详情</a>
+        </script>
+
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'table','miniPage','element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            miniPage = layui.miniPage;
+
+        table.render({
+            elem: '#currentTableId',
+            url: 'http://localhost:8082/tbBusiness/getLayuiPageWithAudit',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            cols: [
+                [
+                    {type: "checkbox", width: 50, fixed: "left"},
+                    {field: 'businessId', width: 80, title: 'ID', sort: true,align:'center'},
+                    {field: 'businessName', width: 110, title: '企业名称', sort: true},
+                    {field: 'businessTrade', width: 100, title: '企业类型',align:'center'},
+                    {field: 'capital', width: 200, title: '注册资金', sort: true,align:'center'},
+                    {field: 'creditCode', width: 200, title: '社会信用统一代码', sort: true,align:'center'},
+                    {field: 'foundtime', width: 150, title: '成立时间', sort: true,align:'center'},
+                    {title: '操作', minWidth: 200, templet: '#currentTableBar', fixed: "right", align: "center"}
+                ]
+            ],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: true
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            var result = JSON.stringify(data.field);
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    searchParams: result
+                }
+            }, 'data');
+
+            return false;
+        });
+
+
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'pass') {
+                layer.confirm('确定通过吗？', function (index) {
+                    $.post({
+                        url: "tbBusiness/updatepass",
+                        data: {
+                            'id': data.businessId
+                        },
+                        success: function (res) {
+                            if (res){
+                                layer.alert("审核通过成功！！！");
+                                table.reload('currentTableId',{});
+                            }else{
+                                layer.alert("审核通过失败！！！");
+                            }
+                            layer.close(index);
+                        }
+                    });
+                });
+            }else if (obj.event === 'forbidden') {
+                layer.confirm('确定禁用吗？', function (index) {
+                    $.post({
+                        url: "tbBusiness/updateforbidden",
+                        data: {
+                            'id': data.businessId
+                        },
+                        success: function (res) {
+                            if (res){
+                                layer.alert("禁用成功！！！");
+                                table.reload('currentTableId',{});
+                            }else{
+                                layer.alert("禁用失败！！！");
+                            }
+                            layer.close(index);
+                        }
+                    });
+                });
+            }
+            else if(obj.event === 'detail')
+            {
+                var content = miniPage.getHrefContent('businessDetail');
+                var openWH = miniPage.getOpenWidthHeight();
+                // console.log(data);
+                // console.log(data.businessId);
+                var index = layer.open({
+                    title: '企业详情',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                    success: function (layero, index) {
+                        $.getJSON("/tbBusiness/getDetail?id="+data.businessId,function (res) {
+                            console.log(res);
+                            console.log(res[0].businessName)
+                            $("#detail-form input[name='businessName']").val(res[0].businessName);
+                            $("#detail-form input[name='businessUsername']").val(res[0].businessUsername);
+                            $("#detail-form input[name='businessTrade']").val(res[0].businessTrade);
+                            $("#detail-form input[name='address']").val(res[0].address);
+                            $("#detail-form input[name='email']").val(res[0].email);
+                            $.each(res[0].tbJob,function (i,item) {
+                                const content = "<li  style='margin:5px 300px 5px 150px;border-bottom: 1px solid #CCCCCC;padding-left: 10px;height: 80px;position: relative'>\n" +
+                                    "<span style='float: left;width: 50%;font-size:20px;height: 30px;'>"+item.jobName+"</span>" +"<span  style='float: left;width: 50%;height: 30px;line-height: 30px;color: #33CC99'>"+item.salary+"</span>" +
+                                    "<span style='float: left;width: 50%;height: 25px;line-height: 25px;font-size: 10px;color: #9c9da0;'>"+item.address+"</span>"+ "<span style='float: left;width: 50%;height: 25px;line-height: 25px;color: #9c9da0;'>" +item.worktime+"</span>" +
+                                    "<span style='float: left;width: 50%;height: 25px;line-height: 25px;color: #9c9da0;'>"+item.contact+"  招聘者"+"</span>" + "<span style='float: left;width: 50%;height: 25px;line-height: 25px;color: #9c9da0;'>"+"招聘人数："+item.reqnum+"</span>" +
+                                    "</li>";
+                                $(".jobList").append(content);
+                            });
+                            form.render();
+                        });
+                    },
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            }
+        });
+
+    });
+</script>

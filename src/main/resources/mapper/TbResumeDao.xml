@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liyi.part_time.dao.TbResumeDao">
+
+    <resultMap type="com.liyi.part_time.entity.TbResume" id="TbResumeMap">
+        <result property="resumeId" column="resume_id" jdbcType="INTEGER"/>
+        <result property="jobHunterId" column="job_hunter_id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="image" column="image" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="nation" column="nation" jdbcType="VARCHAR"/>
+        <result property="eduschool" column="eduschool" jdbcType="VARCHAR"/>
+        <result property="edumajor" column="edumajor" jdbcType="VARCHAR"/>
+        <result property="eduduty" column="eduduty" jdbcType="VARCHAR"/>
+        <result property="eduaward" column="eduaward" jdbcType="VARCHAR"/>
+        <result property="evaluation" column="evaluation" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="OTHER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TbResumeMap">
+        select * from part_time.tb_resume
+        where job_hunter_id = #{jobHunterId}
+    </select>
+
+    <select id="queryByResumeId" resultMap="TbResumeMap">
+        select * from part_time.tb_resume
+        where resume_id = #{resumeId}
+    </select>
+
+
+    <select id="queryByBusinessId" resultMap="TbResumeMap">
+        select * from tb_resume where resume_id in(
+            select resume_id from tb_resume_collection
+                where tb_resume_collection.business_id=#{id} and tb_resume_collection.state=1)
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TbResumeMap">
+        select * from part_time.tb_resume
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="TbResumeMap">
+        select * from part_time.tb_resume
+        <where>
+            <if test="resumeId != null">
+                and resume_id = #{resumeId}
+            </if>
+            <if test="jobHunterId != null and jobHunterId != ''">
+                and job_hunter_id = #{jobHunterId}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="image != null and image != ''">
+                and image = #{image}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="age != null and age != ''">
+                and age = #{age}
+            </if>
+            <if test="nation != null and nation != ''">
+                and nation = #{nation}
+            </if>
+            <if test="eduschool != null and eduschool != ''">
+                and eduschool like '%${eduschool}%'
+            </if>
+            <if test="edumajor != null and edumajor != ''">
+                and edumajor = #{edumajor}
+            </if>
+            <if test="eduduty != null and eduduty != ''">
+                and eduduty = #{eduduty}
+            </if>
+            <if test="eduaward != null and eduaward != ''">
+                and eduaward = #{eduaward}
+            </if>
+            <if test="evaluation != null and evaluation != ''">
+                and evaluation = #{evaluation}
+            </if>
+            <if test="updateTime != null and updateTime != ''">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="resumeId" useGeneratedKeys="true">
+        insert into part_time.tb_resume(job_hunter_id, name, image,phone, sex, age, nation, eduschool, edumajor, eduduty, eduaward, evaluation,update_time)
+        values (#{jobHunterId}, #{name}, #{image}, #{phone}, #{sex}, #{age}, #{nation},#{eduschool}, #{edumajor}, #{eduduty}, #{eduaward}, #{evaluation},#{updateTime})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update part_time.tb_resume
+        <set>
+            <if test="name != null and name != ''">
+            name = #{name},
+            </if>
+            <if test="image != null and image != ''">
+                image = #{image},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+            <if test="nation != null and nation != ''">
+                nation = #{nation},
+            </if>
+            <if test="eduschool != null and eduschool != ''">
+                eduschool = #{eduschool},
+            </if>
+            <if test="edumajor != null and edumajor != ''">
+                edumajor = #{edumajor},
+            </if>
+            <if test="eduduty != null and eduduty != ''">
+                eduduty = #{eduduty},
+            </if>
+            <if test="eduaward != null and eduaward != ''">
+                eduaward = #{eduaward},
+            </if>
+            <if test="evaluation != null and evaluation != ''">
+                evaluation = #{evaluation},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where job_hunter_id = #{jobHunterId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from part_time.tb_resume where resume_id = #{resumeId}
+    </delete>
+
+    <select id="getPage" resultMap="TbResumeMap">
+        select * from part_time.tb_resume
+        <where>
+            <if test="eduschool != null and eduschool != ''">
+                and eduschool like '%${eduschool}%'
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liyi.part_time.dao.TbJobDao">
+
+    <resultMap type="com.liyi.part_time.entity.TbJob" id="TbJobMap">
+        <result property="jobId" column="job_id" jdbcType="INTEGER"/>
+        <result property="businessId" column="businessid" jdbcType="INTEGER"/>
+        <result property="jobName" column="job_name" jdbcType="VARCHAR"/>
+        <result property="salary" column="salary" jdbcType="INTEGER"/>
+        <result property="reqnum" column="reqnum" jdbcType="INTEGER"/>
+        <result property="contact" column="businesscontact" jdbcType="VARCHAR"/>
+        <result property="worktime" column="worktime" jdbcType="VARCHAR"/>
+        <result property="techrequest" column="techrequest" jdbcType="VARCHAR"/>
+        <result property="duty" column="duty" jdbcType="VARCHAR"/>
+        <result property="address" column="jobaddress" jdbcType="VARCHAR"/>
+        <result property="postTime" column="post_time" jdbcType="OTHER"/>
+        <result property="postState" column="post_state" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+    <resultMap type="com.liyi.part_time.vo.JobVO" id="TbJobVOMap">
+        <result property="jobId" column="job_id" jdbcType="INTEGER"/>
+        <result property="businessId" column="businessid" jdbcType="INTEGER"/>
+        <result property="businessName" column="business_name" jdbcType="VARCHAR"/>
+        <result property="jobName" column="job_name" jdbcType="VARCHAR"/>
+        <result property="jobCategory" column="job_category" jdbcType="VARCHAR"/>
+        <result property="salary" column="salary" jdbcType="INTEGER"/>
+        <result property="reqnum" column="reqnum" jdbcType="INTEGER"/>
+        <result property="contact" column="businesscontact" jdbcType="VARCHAR"/>
+        <result property="worktime" column="worktime" jdbcType="VARCHAR"/>
+        <result property="techrequest" column="techrequest" jdbcType="VARCHAR"/>
+        <result property="duty" column="duty" jdbcType="VARCHAR"/>
+        <result property="address" column="jobaddress" jdbcType="VARCHAR"/>
+        <result property="postTime" column="post_time" jdbcType="OTHER"/>
+        <result property="postState" column="post_state" jdbcType="INTEGER"/>
+        <result property="postNum" column="post_num" jdbcType="INTEGER"/>
+        <result property="abletime" column="times" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 关联的外键的ResultMap -->
+    <resultMap  id="TbJobMapWithFK" type="com.liyi.part_time.vo.JobVO" extends="TbJobVOMap">
+        <collection property="tbBusiness" resultMap="com.liyi.part_time.dao.TbBusinessDao.TbBusinessMap"></collection>
+      </resultMap>
+
+    <!-- 关联的外键的ResultMap -->
+    <resultMap  id="TbJobMapWithDelFK" type="com.liyi.part_time.vo.JobVO" extends="TbJobVOMap">
+        <collection property="tbBusiness" resultMap="com.liyi.part_time.dao.TbBusinessDao.TbBusinessMap"></collection>
+        <collection property="tbDelivery" resultMap="com.liyi.part_time.dao.TbDeliveryDao.TbDeliveryMap"></collection>
+    </resultMap>
+
+    <!-- 关联的外键的ResultMap -->
+    <resultMap  id="TbJobMapWithAll" type="com.liyi.part_time.vo.JobVO" extends="TbJobVOMap">
+        <collection property="tbBusiness" resultMap="com.liyi.part_time.dao.TbBusinessDao.TbBusinessMap"></collection>
+        <collection property="tbDelivery" resultMap="com.liyi.part_time.dao.TbDeliveryDao.TbDeliveryMap"></collection>
+        <collection property="tbResume" resultMap="com.liyi.part_time.dao.TbResumeDao.TbResumeMap"></collection>
+    </resultMap>
+
+    <!-- 关联的外键的ResultMap -->
+    <resultMap  id="TbJobMapWithDeliveryandResume" type="com.liyi.part_time.vo.JobVO" extends="TbJobVOMap">
+        <collection property="tbDelivery" resultMap="com.liyi.part_time.dao.TbDeliveryDao.TbDeliveryMap"></collection>
+        <collection property="tbResume" resultMap="com.liyi.part_time.dao.TbResumeDao.TbResumeMap"></collection>
+    </resultMap>
+
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TbJobMap">
+        select
+          * from part_time.tb_job
+        where job_id = #{jobId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TbJobMap">
+        select
+          * from part_time.tb_job
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="TbJobMap">
+        select
+          * from part_time.tb_job
+        <where>
+            <if test="jobId != null">
+                and job_id = #{jobId}
+            </if>
+            <if test="businessId != null">
+                and businessid = #{businessId}
+            </if>
+            <if test="jobName != null and jobName != ''">
+                and job_name = #{jobName}
+            </if>
+            <if test="jobCategory != null and jobCategory != ''">
+                and job_category = #{jobCategory}
+            </if>
+            <if test="salary != null">
+                and salary = #{salary}
+            </if>
+            <if test="reqnum != null">
+                and reqnum = #{reqnum}
+            </if>
+            <if test="contact != null and contact != ''">
+                and businesscontact = #{contact}
+            </if>
+            <if test="worktime != null and worktime != ''">
+                and worktime = #{worktime}
+            </if>
+            <if test="techrequest != null and techrequest != ''">
+                and techrequest = #{techrequest}
+            </if>
+            <if test="duty != null and duty != ''">
+                and duty = #{duty}
+            </if>
+            <if test="address != null and address != ''">
+                and jobaddress = #{address}
+            </if>
+            <if test="postTime != null">
+                and post_time = #{postTime}
+            </if>
+            <if test="postState != null">
+                and post_state = #{postState}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="jobId" useGeneratedKeys="true">
+        insert into part_time.tb_job(businessid, job_name, salary, reqnum, businesscontact, worktime, techrequest, duty, jobaddress, post_time, post_state)
+        values (#{businessId}, #{jobName}, #{salary}, #{reqnum}, #{contact}, #{worktime}, #{techrequest}, #{duty}, #{address}, #{postTime}, #{postState})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update part_time.tb_job
+        <set>
+            <if test="businessId != null">
+                businessid = #{businessId},
+            </if>
+            <if test="jobName != null and jobName != ''">
+                job_name = #{jobName},
+            </if>
+            <if test="salary != null">
+                salary = #{salary},
+            </if>
+            <if test="reqnum != null">
+                reqnum = #{reqnum},
+            </if>
+            <if test="contact != null and contact != ''">
+                businesscontact = #{contact},
+            </if>
+            <if test="worktime != null and worktime != ''">
+                worktime = #{worktime},
+            </if>
+            <if test="techrequest != null and techrequest != ''">
+                techrequest = #{techrequest},
+            </if>
+            <if test="duty != null and duty != ''">
+                duty = #{duty},
+            </if>
+            <if test="address != null and address != ''">
+                jobaddress = #{address},
+            </if>
+            <if test="postTime != null">
+                post_time = #{postTime},
+            </if>
+            <if test="postState != null">
+                post_state = #{postState},
+            </if>
+        </set>
+        where job_id = #{jobId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from part_time.tb_job where tb_job.job_id = #{jobId}
+    </delete>
+
+    <select id="selectCountByAll"  resultType="int">
+        select IFNULL(count(job_id), 0) from part_time.tb_job
+    </select>
+
+
+    <!--批量删除数据-->
+    <delete id="batchDelete">
+        delete from part_time.tb_job
+        where job_id IN
+        <foreach collection="List" item="item"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!--获取总记录数-->
+    <select id="getCountWithTime" resultType="int">
+        select IFNULL(count(job_id), 0) from part_time.tb_job,part_time.tb_business
+        <where>
+            <if test="jobName != null and jobName != ''">
+                and job_name like '%${jobName}%'
+            </if>
+            <if test="contact != null and contact != ''">
+                and businesscontact like '%${contact}%'
+            </if>
+            <if test="address != null and address != ''">
+                and jobaddress like '%${address}%'
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and post_time <![CDATA[>=]]> #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and post_time <![CDATA[<=]]>#{endDate}
+            </if>
+            and tb_job.businessid=tb_business.business_id and tb_business.forbidden=1
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="pageByConditionWithTime" resultMap="TbJobVOMap">
+        select * from part_time.tb_job,part_time.tb_business
+        <where>
+                <if test="jobName != null and jobName != ''">
+                    and job_name like '%${jobName}%'
+                </if>
+                <if test="contact != null and contact != ''">
+                    and businesscontact like '%${contact}%'
+                </if>
+                <if test="address != null and address != ''">
+                    and jobaddress like '%${address}%'
+                </if>
+                <if test="startDate != null and startDate != ''">
+                    and post_time <![CDATA[>=]]> #{startDate}
+                </if>
+                <if test="endDate != null and endDate != ''">
+                    and post_time <![CDATA[<=]]>#{endDate}
+                </if>
+            and tb_job.businessid=tb_business.business_id and tb_business.forbidden=1
+        </where>
+        LIMIT #{page}, #{limit}
+    </select>
+
+
+
+    <!--根据默认条件查询页内容-->
+    <select id="selectListByAllWithPage" resultMap="TbJobMap">
+         select * from part_time.tb_job
+        LIMIT #{start}, #{rows}
+    </select>
+
+    <!--根据默认条件查询页内容（包含外键）-->
+    <select id="selectListByAllWithPageFK" resultMap="TbJobMapWithFK">
+         select a.*,b.* from part_time.tb_job a,part_time.tb_business b where a.business_id=b.business_id
+        LIMIT #{start}, #{rows}
+    </select>
+
+    <select id="getPageWithFK" resultMap="TbJobMapWithFK">
+         select a.*,b.* from part_time.tb_job a,part_time.tb_business b
+        <where>
+            <if test="jobName != null and jobName != ''">
+                and job_name like '%${jobName}%'
+            </if>
+            and a.businessid=b.business_id
+        </where>
+    </select>
+
+    <select id="getJobById" resultMap="TbJobMapWithFK">
+         select * from tb_business,tb_job
+         where tb_job.businessid = tb_business.business_id and tb_job.job_id=#{jobId}
+    </select>
+
+    <select id="getJobByBusinessId" resultMap="TbJobMap">
+         select * from tb_job
+         where tb_job.businessid =#{businessId}
+    </select>
+
+    <select id="getListwithDelivery" resultMap="TbJobMapWithDelFK">
+         select * from tb_job,tb_business,tb_delivery
+            where tb_job.job_id in
+              (select tb_delivery.job_id from tb_delivery where resume_id =#{id})
+                <if test="jobName != null and jobName != ''">
+                    and job_name like '%${jobName}%'
+                </if>
+                  and tb_job.businessid=tb_business.business_id order by tb_delivery.del_id
+    </select>
+
+
+    <select id="getListwithCollection" resultMap="TbJobMapWithFK">
+         select * from tb_job,tb_business
+            where job_id in
+              (select job_id from tb_job_collection where tb_job_collection.cstate =1 and resumeid =#{resumeId})
+                  and tb_job.businessid=tb_business.business_id
+    </select>
+
+
+    <select id="queryJobWithDeliveryandResume" resultMap="TbJobMapWithDeliveryandResume">
+         select * from tb_job,tb_resume,tb_delivery
+            where tb_job.job_id = tb_delivery.job_id
+                and tb_delivery.resume_id = tb_resume.resume_id
+                and tb_delivery.business_id = tb_job.businessid
+                and  tb_job.job_id = #{jobId}
+                and tb_job.businessid = #{businessId}
+                order by tb_delivery.state
+    </select>
+
+
+    <select id="queryJobWithDeliveryandnotnull" resultMap="TbJobMapWithDelFK">
+         select * from tb_delivery, tb_business,tb_job
+            where tb_delivery.business_id = tb_business.business_id
+                  and tb_delivery.job_id = tb_job.job_id
+                  and tb_business.business_id =#{businessId}
+                  and tb_delivery.remark is not NULL
+                  order by tb_delivery.interview_time
+    </select>
+
+    <select id="queryJobWithDeliveryandjobnotnull" resultMap="TbJobMapWithAll">
+         select * from tb_delivery, tb_business,tb_job,tb_resume
+            where tb_delivery.business_id = tb_business.business_id
+                  and tb_delivery.job_id = tb_job.job_id
+                  and tb_business.business_id =#{businessId}
+                  and tb_delivery.remark is not NULL
+                  and tb_job.job_id=#{jobId}
+                  and tb_delivery.resume_id = tb_resume.resume_id
+                  order by tb_delivery.interview_time
+    </select>
+
+    <select id="queryJobWithDelivery" resultMap="TbJobVOMap" >
+        select *,sum(state=1) as post_num from tb_job,tb_delivery
+            where tb_job.job_id in
+            (select job_id
+            from tb_delivery
+            where business_id=#{id})
+            <if test="jobName != null and jobName != ''">
+                and job_name like '%${jobName}%'
+            </if>
+            and tb_delivery.job_id= tb_job.job_id group by tb_job.job_id
+            order by post_num DESC
+    </select>
+
+    <select id="queryJobWithInvite" resultMap="TbJobMapWithDeliveryandResume" >
+        select *,sum(interview_time>now() and state=3)as times from tb_job,tb_delivery
+        where tb_job.job_id in
+        (select job_id
+        from tb_delivery
+        where business_id=#{id} and tb_delivery.remark is not null)
+        <if test="jobName != null and jobName != ''">
+            and job_name like '%${jobName}%'
+        </if>
+        and tb_delivery.job_id= tb_job.job_id group by tb_job.job_id
+        order by times DESC
+    </select>
+
+    <select id="getNum" resultType="int">
+        select IFNULL(count(job_id), 0) from part_time.tb_job,part_time.tb_business
+            where tb_business.business_id= tb_job.businessid and tb_business.forbidden=1
+    </select>
+
+</mapper>

@@ -1,0 +1,143 @@
+<div class="layuimini-main">
+<from id="editFrom" class="layui-form">
+    <div class="layui-form layuimini-form">
+        <input type="hidden" name="adminId" value=""/>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" id="name" name="adminName" lay-verify="required" lay-reqtext="用户名不能为空" placeholder="请输入用户名" value="" class="layui-input">
+                <tip>填写自己管理账号的名称。</tip>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="adminPsw" lay-verify="required" lay-reqtext="密码不能为空" placeholder="请输入密码" value="" class="layui-input">
+                <tip  name="adminPswtip">请谨慎修改当前账户密码,密码的格式为6-12位，只能是字母、数字和下划线</tip>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">确认密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="readminPsw" lay-verify="required" lay-reqtext="密码确认不能跳过" placeholder="请再次输入密码" value="" class="layui-input">
+                <tip name="readminPswtip">两次密码输入需一致</tip>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">性别</label>
+            <div class="layui-input-block">
+                <input type="radio" name="adminSex" value="男" title="男" checked="">
+                <input type="radio" name="adminSex" value="女" title="女">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">手机</label>
+            <div class="layui-input-block">
+                <input type="number" name="phone" lay-verify="required|phone" lay-reqtext="手机不能为空" placeholder="请输入手机" value="" class="layui-input">
+                <tip name="phonetip">手机格式首位需为1</tip>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">入职时间</label>
+            <div class="layui-input-block">
+                <input type="date" name="entry_time" lay-verify="required" lay-reqtext="入职时间不能为空" placeholder="请输入入职时间" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="saveBtn">确认修改</button>
+            </div>
+        </div>
+    </div>
+</from>
+</div>
+
+<script>
+
+    layui.use(['form', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            $ = layui.$;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        $(".layui-form input[name='adminPsw']").blur(function(){
+            var res=$(".layui-form input[name='adminPsw']").val();
+            var reg = /^[\d_a-zA-Z]{6,12}$/
+            if(res.match(reg))
+            {
+                $(".layui-form tip[name='adminPswtip']").text("密码格式输入正确。")
+            }else
+            {
+                $(".layui-form tip[name='adminPswtip']").text("密码格式输入错误,请重新输入")
+                $(".layui-form input[name='adminPsw']").val("");
+            }
+        });
+
+
+        //确认密码是否两次输入正确
+        $(".layui-form input[name='readminPsw']").blur(function(){
+            var res1=$(".layui-form input[name='adminPsw']").val();
+            var res2=$(".layui-form input[name='readminPsw']").val();
+            if(res1==res2)
+            {
+                $(".layui-form tip[name='readminPswtip']").text("两次密码输入一致,请继续输入。")
+            }
+            else
+            {
+                $(".layui-form tip[name='readminPswtip']").text("两次密码输入不一致，请重新输入。")
+                $(".layui-form input[name='readminPsw']").val("");
+            }
+        });
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            console.log(data.field);
+
+            $.ajax({
+                type: 'POST',
+                url: "tbAdmin/update",
+                data: data.field,
+                dataType: 'json',
+                async: false,
+                cache: false,
+                success:function(res){
+                    if(res.code='0'){
+                        var index = layer.alert('修改成功', {
+                            title: '最终的提交信息'
+                        }, function () {
+                            // 关闭弹出层
+                            layer.close(index);
+                            layer.close(parentIndex);
+                            table.reload('currentTableId',{});
+                        });
+                    }
+                    else
+                        var index = layer.alert('添加失败', {
+                            title: '最终的提交信息'
+                        }, function () {
+                            // 关闭弹出层
+                            layer.close(index);
+                            layer.close(parentIndex);
+                        });
+                },
+                error:function (data) {
+                }
+            });
+                return false;//阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
+
+
+
+
+        return false;
+        });
+
+</script>

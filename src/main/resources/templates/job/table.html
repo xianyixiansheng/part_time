@@ -1,0 +1,240 @@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">岗位名称</label>
+                            <div class="layui-input-inline" style="width:150px;">
+                                <input type="text" name="jobName" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width:80px;">联系人</label>
+                            <div class="layui-input-inline" style="width:150px;">
+                                <input type="text" name="contact" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">工作地点</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="address" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">开始日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="startDate" name="startDate" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">结束日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="endDate" name="endDate" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除岗位 </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <!--<a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>-->
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="detail">详情</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+        </script>
+
+    </div>
+</div>
+
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#startDate'
+            ,format: 'yyyy-MM-dd'
+        });
+        laydate.render({
+            elem: '#endDate'
+            ,format: 'yyyy-MM-dd'
+        });
+    });
+</script>
+
+<script>
+    layui.use(['form', 'table','miniPage','element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            miniPage = layui.miniPage;
+        var param = "null,null,null,null,null";
+        table.render({
+            elem: '#currentTableId',
+            url: 'http://localhost:8082/tbJob/getLayuiPageWithTime',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            where: {searchParams: param.toString()},
+            datatype: "json",
+            cols: [
+                [
+                {type: "checkbox", width: 50, fixed: "left"},
+                {field: 'jobId', title: 'ID',width:80, align:'center',  sort: true},
+                {field: 'jobName', title: '岗位名称', width:120, align:'center', sort: true},
+                {field: 'businessName', title: '公司名称', width:120, align:'center', sort: true},
+                {field: 'salary', title: '薪水', width:100, align:'center', sort: true},
+                {field: 'contact', title: '联系人', width:100, align:'center', sort: true},
+                {field: 'techrequest', title: '岗位要求', width:250, align:'center', sort: true},
+                {field: 'address', title: '地址', width:250, align:'center', sort: true},
+                {field: 'postTime', title: '发布时间', width:250, align:'center', sort: true},
+                {title: '操作', minWidth: 150, templet: '#currentTableBar', fixed: "right", align: "center"}
+            ]
+            ],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: true
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            var jobName = (data.field.jobName=='') ? "null": data.field.jobName;
+            var contact = (data.field.contact=='') ? "null": data.field.contact;
+            var address = (data.field.address=='') ? "null": data.field.address;
+            var startDate = (data.field.startDate=='') ? "null": data.field.startDate;
+            var endDate = (data.field.endDate=='') ? "null": data.field.endDate;
+            var result = jobName+","+contact+","+address+","+startDate+","+endDate;
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    searchParams: result
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        /**
+         * toolbar事件监听
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId'), data = checkStatus.data;
+                if (null != data && data.length > 0){
+                    layer.confirm("确定要删除吗？",function (index) {
+                        var List = new Array();
+                        $.each(data,function (i,item) {
+                            List.push(item.jobId);
+                        });
+                        $.ajax({
+                            type: 'POST',
+                            url: "tbJob/batchDelete",
+                            data: {
+                                'ids': List
+                            },
+                            cache:false,
+                            dataType:'json',
+                            async:true,
+                            traditional:true,//这个参数必须添加，采用传统方式转换
+                            success: function (res) {
+                                console.log(res);
+                                layer.alert("删除成功");
+                                table.reload('currentTableId',{});
+                                layer.close(index);
+                            },
+                            error:function (res) {
+                                console.log(res);
+                                layer.close(index);
+                                layer.alert("删除失败！！！");
+                            }
+                        });
+                    });
+                }
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'detail') {  // 监听详情操作
+                var content = miniPage.getHrefContent('jobDetail');
+                var openWH = miniPage.getOpenWidthHeight();
+
+                var index = layer.open({
+                    title: '详情页面',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                    success: function (layero, index) {
+                        console.log(data)
+                        $(".layui-form input[name='jobid']").val(obj.data.jobId);
+                        $(".layui-form input[name='jobname']").val(obj.data.jobName);
+                        $(".layui-form input[name='businessname']").val(obj.data.businessName);
+                        $(".layui-form input[name='jobsalary']").val(obj.data.salary);
+                        $(".layui-form input[name='jobreqnum']").val(obj.data.reqnum);
+                        $(".layui-form input[name='jobcontact']").val(obj.data.contact);
+                        $(".layui-form input[name='jobworktime']").val(obj.data.worktime);
+                        $(".layui-form textarea[name='jobtechrequest']").val(obj.data.techrequest);
+                        $(".layui-form textarea[name='jobduty']").val(obj.data.duty);
+                        $(".layui-form input[name='jobaddress']").val(obj.data.address);
+                        $(".layui-form input[name='jobpostTime']").val(layui.util.toDateString(obj.data.postTime,"yyyy-MM-dd HH:mm:ss"));
+
+                        form.render();
+                    },
+                });
+
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            } else if (obj.event === 'delete') {
+                layer.confirm('真的删除行么', function (index) {
+                    $.post({
+                        url: "tbJob/delete",
+                        data: {
+                            'id': data.jobId
+                        },
+                        success: function (res) {
+                            if (res){
+                                obj.del();
+                            }else{
+                                layer.alert("删除失败！！！");
+                            }
+                            layer.close(index);
+                        }
+                    });
+                });
+            }
+        });
+
+    });
+</script>

@@ -1,0 +1,97 @@
+<style>
+    .layui-form-item .layui-input-company {width: auto;padding-right: 10px;line-height: 38px;}
+</style>
+<div class="layuimini-container layuimini-page-anim" xmlns:th="http://www.thymeleaf.org" >
+    <div class="layuimini-main">
+
+        <div class="layui-form layuimini-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">用户名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="adminName" lay-verify="required" lay-reqtext="用户名号不能为空" placeholder="请输入用户名"  class="layui-input">
+                    <tip></tip>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">性别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="adminSex" value="男" title="男" checked="">
+                    <input type="radio" name="adminSex" value="女" title="女">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">手机</label>
+                <div class="layui-input-block">
+                    <input type="number" name="adminphone" lay-verify="required" lay-reqtext="手机不能为空" placeholder="请输入手机" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">入职时间</label>
+                <div class="layui-input-block">
+                    <input type="date" name="entry_time" lay-verify="required" placeholder="请输入入职时间"  class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="saveBtn">确认保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form','miniPage'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$,
+            miniPage = layui.miniPage;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        console.log(sessionStorage['username'])
+        $.ajax({
+            type: 'POST',
+            url: "tbAdmin/queryByName",
+            data:{
+                'name': sessionStorage['username']
+            },
+            dataType: 'json',
+            async: false,
+            cache: false,
+            success:function(res){
+                $(".layui-form input[name='adminName']").val(res.adminName);
+                console.log(res)
+                console.log(res.adminSex)
+                $("input[name='adminSex'][value='"+res.adminSex+"']").attr('checked','checked');
+                // $(".layui-form input[name='adminSex']").val(res.adminSex);
+                $(".layui-form input[name='adminphone']").val(res.phone);
+                $(".layui-form input[name='entry_time']").val(res.entry_time);
+            }
+        });
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+           console.log(data.field);
+            $.ajax({
+                type: 'POST',
+                url: "tbAdmin/updateInfo",
+                data: data.field,
+                dataType: 'json',
+                async: false,
+                cache: false,
+                success:function(res){
+                    if (res.message == "修改基本信息成功"){
+                        layer.msg('修改基本信息成功');
+                        window.location="index";
+                    }else{
+                        layer.msg(res.message);
+                    }
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

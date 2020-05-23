@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liyi.part_time.dao.TbDeliveryDao">
+
+    <resultMap type="com.liyi.part_time.entity.TbDelivery" id="TbDeliveryMap">
+        <result property="delId" column="del_id" jdbcType="INTEGER"/>
+        <result property="resumeId" column="resume_id" jdbcType="INTEGER"/>
+        <result property="businessId" column="business_id" jdbcType="INTEGER"/>
+        <result property="jobId" column="job_id" jdbcType="INTEGER"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+        <result property="deliveryTime" column="delivery_time" jdbcType="OTHER"/>
+        <result property="checkTime" column="check_time" jdbcType="OTHER"/>
+        <result property="inviteTime" column="invite_time" jdbcType="OTHER"/>
+        <result property="interviewTime" column="interview_time" jdbcType="OTHER"/>
+        <result property="interviewContact" column="interview_contact" jdbcType="VARCHAR"/>
+        <result property="interviewPhone" column="interview_phone" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.liyi.part_time.vo.DeliveryVO" id="DeliveryVOMap">
+        <result property="delId" column="del_id" jdbcType="INTEGER"/>
+        <result property="endState" column="endState" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 关联的外键的ResultMap -->
+    <resultMap  id="TbDeliveryMapandResume" type="com.liyi.part_time.entity.TbDelivery" extends="TbDeliveryMap">
+        <collection property="tbResume" resultMap="com.liyi.part_time.dao.TbResumeDao.TbResumeMap"></collection>
+    </resultMap>
+
+    <resultMap  id="TbDeliveryMapandBusinessAndJob" type="com.liyi.part_time.entity.TbDelivery" extends="TbDeliveryMap">
+        <association property="tbResume" resultMap="com.liyi.part_time.dao.TbResumeDao.TbResumeMap"></association>
+        <association property="tbBusiness" resultMap="com.liyi.part_time.dao.TbBusinessDao.TbBusinessMap"></association>
+        <association property="tbJob" resultMap="com.liyi.part_time.dao.TbJobDao.TbJobMap"></association>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TbDeliveryMapandBusinessAndJob">
+        select
+          * from part_time.tb_delivery,tb_resume,tb_business
+        where del_id = #{delId} and tb_delivery.resume_id=tb_resume.resume_id and tb_delivery.business_id = tb_business.business_id
+    </select>
+
+    <select id="queryforEnd" resultMap="DeliveryVOMap">
+       select  del_id,sum(interview_time &lt; now() or state=5) as endState from tb_delivery where del_id = #{delId}
+    </select>
+
+
+    <update id="updateStatewithDelivery">
+        update part_time.tb_delivery
+        <set>
+                state = 2
+        </set>
+        where del_id = #{delId} and state=1
+    </update>
+
+    <select id="queryAllwithResumeId" resultMap="TbDeliveryMapandBusinessAndJob">
+       select * from tb_delivery,tb_business,tb_job
+        where resume_id = #{resumeId}
+            and remark is not null
+            and tb_delivery.job_id = tb_job.job_id
+	        and tb_delivery.business_id = tb_business.business_id
+	        and tb_delivery.interview_time <![CDATA[>=]]> now()
+	        and tb_delivery.state=3;
+    </select>
+
+    <select id="queryAllwithResumeIdandOverTime" resultMap="TbDeliveryMapandBusinessAndJob">
+       select * from tb_delivery,tb_business,tb_job
+        where resume_id = #{resumeId}
+            and remark is not null
+            and tb_delivery.job_id = tb_job.job_id
+	        and tb_delivery.business_id = tb_business.business_id
+	        and ((DATE_SUB(tb_delivery.interview_time,INTERVAL -7 DAY)<![CDATA[>=]]> now()
+	        and tb_delivery.interview_time <![CDATA[<]]> now()) or tb_delivery.state=5);
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TbDeliveryMap">
+        select
+          * from part_time.tb_delivery
+        limit #{offset}, #{limit}
+    </select>
+    
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="delId" useGeneratedKeys="true">
+        insert into part_time.tb_delivery(resume_id, business_id, job_id, state, delivery_time, remark, check_time, invite_time, interview_time, interview_contact, interview_phone, address)
+        values (#{resumeId}, #{businessId}, #{jobId}, #{state}, #{deliveryTime}, #{remark}, #{checkTime}, #{inviteTime}, #{interviewTime}, #{interviewContact}, #{interviewPhone}, #{address})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update part_time.tb_delivery
+        <set>
+            <if test="resumeId != null">
+                resume_id = #{resumeId},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId},
+            </if>
+            <if test="jobId != null">
+                job_id = #{jobId},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="deliveryTime != null">
+                delivery_time = #{deliveryTime},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="checkTime != null">
+                check_time = #{checkTime},
+            </if>
+            <if test="inviteTime != null">
+                invite_time = #{inviteTime},
+            </if>
+            <if test="interviewTime != null">
+                interview_time = #{interviewTime},
+            </if>
+            <if test="interviewContact != null and interviewContact != ''">
+                interview_contact = #{interviewContact},
+            </if>
+            <if test="interviewPhone != null and interviewPhone != ''">
+                interview_phone = #{interviewPhone},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+        </set>
+        where del_id = #{delId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from part_time.tb_delivery where del_id = #{delId}
+    </delete>
+
+
+    <!--查询单个-->
+    <select id="queryByJobIdandResumeId" resultMap="TbDeliveryMap">
+        select * from part_time.tb_delivery where job_id = #{jobId} and resume_id = #{resumeId}
+    </select>
+
+    <select id="queryByJobIdwithResumeId" resultMap="TbDeliveryMapandResume">
+        select * from tb_resume, tb_delivery
+            where tb_delivery.resume_id=tb_resume.resume_id
+            and tb_delivery.job_id=#{jobId}
+            and tb_resume.resume_id=#{resumeId}
+    </select>
+</mapper>

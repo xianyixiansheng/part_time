@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liyi.part_time.dao.TbAdminDao">
+
+    <resultMap type="com.liyi.part_time.entity.TbAdmin" id="TbAdminMap">
+        <result property="adminId" column="admin_id" jdbcType="INTEGER"/>
+        <result property="adminName" column="admin_name" jdbcType="VARCHAR"/>
+        <result property="adminPsw" column="admin_psw" jdbcType="VARCHAR"/>
+        <result property="adminSex" column="sex" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="entry_time" column="entry_time" jdbcType="OTHER"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TbAdminMap">
+        select
+          * from part_time.tb_admin
+        where admin_id = #{adminId}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="TbAdminMap">
+        select
+        * from part_time.tb_admin
+        <where>
+            <if test="adminId != null">
+                and admin_id = #{adminId}
+            </if>
+            <if test="adminName != null and adminName != ''">
+                and admin_name = #{adminName}
+            </if>
+            <if test="adminPsw != null and adminPsw != ''">
+                and admin_psw = #{adminPsw}
+            </if>
+            <if test="adminImg != null">
+                and admin_img = #{adminImg}
+            </if>
+            <if test="adminSex != null and adminSex != ''">
+                and sex = #{adminSex}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="entry_time != null">
+                and entry_time = #{entry_time}
+            </if>
+            <if test="state != null">
+                and state = #{state}
+            </if>
+        </where>
+    </select>
+
+    <!--获取总记录数-->
+    <select id="getCount" resultType="int">
+        select IFNULL(count(admin_id), 0) from part_time.tb_admin
+        <where>
+        <if test="adminName != null and adminName != ''">
+            and admin_name like '%${adminName}%'
+        </if>
+        <if test="adminSex != null and adminSex != ''">
+            and sex = #{adminSex}
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone like '%${phone}%'
+        </if>
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="pageByCondition" resultMap="TbAdminMap">
+        select
+        admin_id, admin_name, admin_psw, admin_img,sex,phone,entry_time,state
+        from part_time.tb_admin
+        <where>
+        <if test="condition != null">
+            <if test="condition.adminName != null and condition.adminName != ''">
+                and admin_name like '%${condition.adminName}%'
+            </if>
+            <if test="condition.adminSex != null and condition.adminSex != ''">
+                and sex = #{condition.adminSex}
+            </if>
+            <if test="condition.phone != null and condition.phone != ''">
+                and phone like '%${condition.phone}%'
+            </if>
+         </if>
+        </where>
+        LIMIT #{page}, #{limit}
+    </select>
+
+    <!--获取总记录数-->
+    <select id="getCountWithTime" resultType="int">
+        select IFNULL(count(admin_id), 0) from part_time.tb_admin
+        <where>
+            <if test="adminName != null and adminName != ''">
+                and admin_name like '%${adminName}%'
+            </if>
+            <if test="adminSex != null and adminSex != ''">
+                and sex = #{adminSex}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone like '%${phone}%'
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and entry_time <![CDATA[>=]]> #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and entry_time <![CDATA[<=]]>#{endDate}
+            </if>
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="pageByConditionWithTime" resultMap="TbAdminMap">
+        select * from part_time.tb_admin
+        <where>
+            <if test="adminName != null and adminName != ''">
+                and admin_name like '%${adminName}%'
+            </if>
+            <if test="adminSex != null and adminSex != ''">
+                and sex = #{adminSex}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone like '%${phone}%'
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and entry_time <![CDATA[>=]]> #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and entry_time <![CDATA[<=]]>#{endDate}
+            </if>
+        </where>
+        LIMIT #{page}, #{limit}
+    </select>
+
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="adminId" useGeneratedKeys="true">
+        insert into part_time.tb_admin(admin_name, admin_psw, admin_img,sex,phone,entry_time,state)
+        values (#{adminName}, #{adminPsw}, #{adminImg},#{adminSex}, #{phone},#{entry_time},#{state})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update part_time.tb_admin
+        <set>
+            <if test="adminName != null and adminName != ''">
+                admin_name = #{adminName},
+            </if>
+            <if test="adminPsw != null and adminPsw != ''">
+                admin_psw = #{adminPsw},
+            </if>
+            <if test="adminImg != null">
+                admin_img = #{adminImg},
+            </if>
+            <if test="adminSex != null and adminSex != ''">
+                 sex = #{adminSex},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="entry_time != null">
+                entry_time = #{entry_time},
+            </if>
+            <if test="state != null ">
+                state = #{state},
+            </if>
+        </set>
+        where admin_id = #{adminId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from part_time.tb_admin where admin_id = #{adminId}
+    </delete>
+
+    <!--获取当前id数量-->
+    <select id="selectCountByAll"  resultType="int">
+        select IFNULL(count(admin_id), 0) from part_time.tb_admin
+    </select>
+
+    <!--批量删除数据-->
+    <delete id="batchDelete">
+        delete from part_time.tb_admin
+        where admin_id IN
+        <foreach collection="List" item="item"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+
+    <!--查询单个-->
+    <select id="queryByName" resultMap="TbAdminMap">
+        select * from part_time.tb_admin where admin_name = #{adminName}
+    </select>
+
+
+
+</mapper>

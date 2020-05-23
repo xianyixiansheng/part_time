@@ -1,0 +1,275 @@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="name" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户性别</label>
+                            <div class="layui-input-inline">
+                                <!--<input type="text" name="sex" autocomplete="off" class="layui-input">-->
+                                <select name="sex" id="sex">
+                                    <option value="">请选择</option>
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">联系号码</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="phone" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">学院</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="eduschool" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <!--<div class="layui-inline">-->
+                            <!--<label class="layui-form-label">验证状态</label>-->
+                            <!--<div class="layui-input-inline">-->
+                                <!--<input type="text" name="state" autocomplete="off" class="layui-input">-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="layui-inline">-->
+                            <!--<label class="layui-form-label">禁用状态</label>-->
+                            <!--<div class="layui-input-inline">-->
+                                <!--<input type="text" name="forbidden" autocomplete="off" class="layui-input">-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="layui-inline">
+                            <label class="layui-form-label">开始日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="startDate" name="startDate" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">结束日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="endDate" name="endDate" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除用户 </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="detail">详情</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+        </script>
+
+    </div>
+</div>
+
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#startDate'
+            ,format: 'yyyy-MM-dd'
+        });
+        laydate.render({
+            elem: '#endDate'
+            ,format: 'yyyy-MM-dd'
+        });
+    });
+</script>
+
+<script>
+    layui.use(['form', 'table','miniPage','element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            miniPage = layui.miniPage;
+        var param = "null,null,null,null,null,null";
+        form.render('select');
+        table.render({
+            elem: '#currentTableId',
+            url: 'http://localhost:8082/tbJobHunter/getLayuiPageWithTime',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            where: {searchParams: param.toString()},
+            cols: [
+                [
+                {type: "checkbox", width: 50, fixed: "left"},
+                {field: 'jobHunterId',width: 80, title: 'ID', sort: true,align:'center'},
+                {field: 'wxName', width: 100, title: '微信名', sort: true,align:'center'},
+                {field: 'name', width: 100, title: '姓名',align:'center'},
+                {field: 'nation', width: 80,title: '民族',align:'center'},
+                {field: 'sex', width: 80,title: '性别',align:'center'},
+                {field: 'phone', width: 150, title: '电话', sort: true,align:'center'},
+                {field: 'eduschool', width: 150, title: '学院', sort: true,align:'center'},
+                {field: 'edumajor', width: 150, title: '专业', sort: true,align:'center'},
+                {title: '操作', minWidth: 150, templet: '#currentTableBar', fixed: "right", align: "center"}
+            ]
+            ],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: true
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            var name = (data.field.name=='') ? "null": data.field.name;
+            var sex = (data.field.sex=='') ? "null": data.field.sex;
+            var phone=(data.field.phone=='') ? "null": data.field.phone;
+            var eduschool = (data.field.eduschool=='') ? "null": data.field.eduschool;
+            var startDate = (data.field.startDate=='') ? "null": data.field.startDate;
+            var endDate = (data.field.endDate=='') ? "null": data.field.endDate;
+            var result = name+","+sex+","+phone+","+eduschool+","+startDate+","+endDate;
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    searchParams: result
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        /**
+         * toolbar事件监听
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                console.log(data);
+                if (null != data && data.length > 0){
+                    layer.confirm("确定要删除吗？",function (index) {
+                        var List = new Array();
+                        $.each(data,function (i,item) {
+                            List.push(item.jobHunterId);
+                        });
+                        $.ajax({
+                            type: 'POST',
+                            url: "tbJobHunter/batchDelete",
+                            data: {
+                                'ids': List
+                            },
+                            cache:false,
+                            dataType:'json',
+                            async:true,
+                            traditional:true,//这个参数必须添加，采用传统方式转换
+                            success: function (res) {
+                                console.log(res);
+                                layer.alert("删除成功");
+                                table.reload('currentTableId',{});
+                                layer.close(index);
+                            },
+                            error:function (res) {
+                                console.log(res);
+                                layer.close(index);
+                                layer.alert("删除失败！！！");
+                            }
+                        });
+                    });
+                }
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+                if (obj.event === 'detail') {  // 监听详情操作
+                    var content = miniPage.getHrefContent('hunterDetail');
+                    var openWH = miniPage.getOpenWidthHeight();
+
+                    var index = layer.open({
+                        title: '详情页面',
+                        type: 1,
+                        shade: 0.2,
+                        maxmin:true,
+                        shadeClose: true,
+                        area: [openWH[0] + 'px', openWH[1] + 'px'],
+                        offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                        content: content,
+                        success: function (layero, index) {
+                            console.log(data)
+                            $(".layui-form input[name='hunterId']").val(obj.data.jobHunterId);
+                            $(".layui-form input[name='huntername']").val(obj.data.name);
+                            $(".layui-form input[name='hunterwxname']").val(obj.data.wxName);
+                            $(".layui-form input[name='hunterphone']").val(obj.data.phone);
+                            $(".layui-form input[name='hunterage']").val(obj.data.age);
+                            let state = "";
+                            switch (obj.data.sex) {
+                                case "男": state = "男";break;
+                                case "女": state = "女";break;
+                                default: break;
+                            }
+                            $(".layui-form input[name='hunterSex']").val(state);
+                            $(".layui-form input[name='hunterSex']").attr("disabled", "true");
+                            $(".layui-form input[name='hunternation']").val(obj.data.nation);
+                            $(".layui-form input[name='hunterschool']").val(obj.data.eduschool);
+                            $(".layui-form input[name='huntermajor']").val(obj.data.edumajor);
+                            $(".layui-form textarea[name='huntereduduty']").val(obj.data.eduduty);
+                            $(".layui-form textarea[name='huntereduward']").val(obj.data.eduaward);
+                            $(".layui-form textarea[name='hunterevaluation']").val(obj.data.evaluation);
+                            $(".layui-form input[name='huntercreateTime']").val(layui.util.toDateString(obj.data.createTime,"yyyy-MM-dd"));
+                            $(".layui-form input[name='hunterupdateTime']").val(layui.util.toDateString(obj.data.updateTime,"yyyy-MM-dd HH:mm:ss"));
+
+                            form.render();
+                        },
+                    });
+
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    return false;
+                } else if (obj.event === 'delete') {
+                layer.confirm('真的删除行么', function (index) {
+                    $.post({
+                        url: "tbJobHunter/delete",
+                        data: {
+                            'id': data.jobHunterId
+                        },
+                        success: function (res) {
+                            if (res){
+                                obj.del();
+                            }else{
+                                layer.alert("删除失败！！！");
+                            }
+                            layer.close(index);
+                        }
+                    });
+                });
+            }
+        });
+
+    });
+</script>

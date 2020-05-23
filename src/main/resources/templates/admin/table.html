@@ -1,0 +1,269 @@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width:80px;">管理员名</label>
+                            <div class="layui-input-inline" style="width:150px;">
+                                <input type="text" name="adminName" autocomplete="off" class="layui-input" style="width:150px;">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 100px;">管理员性别</label>
+                            <div class="layui-input-inline">
+                                <!--<input type="text" name="adminSex" autocomplete="off" class="layui-input">-->
+                                <select name="adminSex" id="adminSex">
+                                    <option value="">请选择</option>
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label"  style="width:100px;">手机号码</label>
+                            <div class="layui-input-inline"  style="width:200px;">
+                                <input type="text" name="phone" autocomplete="off" class="layui-input"  style="width:200px;">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">开始日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="startDate" name="startDate" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">结束日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="endDate" name="endDate" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon" ></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"> 添加管理员 </button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除管理员 </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+        </script>
+
+    </div>
+</div>
+
+
+
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#startDate'
+            ,format: 'yyyy-MM-dd'
+        });
+        laydate.render({
+            elem: '#endDate'
+            ,format: 'yyyy-MM-dd'
+        });
+    });
+</script>
+
+
+<script>
+    layui.use(['form', 'table','miniPage','element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            miniPage = layui.miniPage;
+        var host="http://localhost:8082/";
+        var param = "null,null,null,null,null";
+        form.render('select');
+        table.render({
+            elem: '#currentTableId',      //绑定table id
+            url: host+'tbAdmin/getLayuiPageWithTime',  //数据请求路径
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            where: {searchParams: param.toString()},
+            datatype: "json",
+            cols: [
+                [
+                {type: "checkbox", width: 50, fixed: "left"},
+                {field: 'adminId', title: 'ID',width:80, align:'center',  sort: true},
+                {field: 'adminName', title: '管理员',width:100, align:'center' },
+                // {field: 'adminPsw', title: '密码', width:180, align:'center', sort: true},
+                {field: 'adminSex', title: '性别',width:100, align:'center' },
+                {field: 'phone', title: '联系方式', width:150, align:'center', sort: true},
+                {field: 'entry_time', title: '入职时间',width:150, align:'center' },
+                {field: 'state', title: '权限', width:100, align:'center', sort: true,templet: function (res) {
+            switch (res.state) {
+                case 0: return "审核人员";
+                case 1: return "管理人员";
+                default: return "";
+            }}},
+                {title: '操作', minWidth: 150, templet: '#currentTableBar', fixed: "right", align: "center"}
+            ]
+            ],
+            limits: [10, 15, 20, 25],  //数据分页条
+            limit: 10,   //默认15条数据一页
+            page: true  //开启分页
+        });
+
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            var adminName = (data.field.adminName=='') ? "null": data.field.adminName;
+            var adminSex = (data.field.adminSex=='') ? "null": data.field.adminSex;
+            var phone = (data.field.phone=='') ? "null": data.field.phone;
+            var startDate = (data.field.startDate=='') ? "null": data.field.startDate;
+            var endDate = (data.field.endDate=='') ? "null": data.field.endDate;
+            var result = adminName+","+adminSex+","+phone+","+startDate+","+endDate;
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    searchParams: result
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        /**
+         * toolbar事件监听
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {   // 监听添加操作
+                console.log("添加");
+                var content = miniPage.getHrefContent('adminAdd');
+                var openWH = miniPage.getOpenWidthHeight();
+
+                var index = layer.open({
+                    title: '添加管理员',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                //console.log("删除列表");
+                var checkStatus = table.checkStatus('currentTableId'), data = checkStatus.data;
+                if (null != data && data.length > 0){
+                    layer.confirm("确定要删除吗？",function (index) {
+                        var List = new Array();
+                        $.each(data,function (i,item) {
+                            List.push(item.adminId);
+                        });
+                        $.ajax({
+                            type: 'POST',
+                            url: "tbAdmin/batchDelete",
+                            data: {
+                                'ids': List
+                            },
+                            cache:false,
+                            dataType:'json',
+                            async:true,
+                            traditional:true,//这个参数必须添加，采用传统方式转换
+                            success: function (res) {
+                                console.log(res);
+                                layer.alert("删除成功");
+                                // obj.del();
+                                table.reload('currentTableId',{});
+                                layer.close(index);
+                            },
+                            error:function (res) {
+                                console.log(res);
+                                layer.close(index);
+                                layer.alert("删除失败！！！");
+                            }
+                        });
+                    });
+                }
+            }
+        });
+
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                var content = miniPage.getHrefContent('adminEdit');
+                var openWH = miniPage.getOpenWidthHeight();
+
+                var index = layer.open({
+                    title: '编辑管理员',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                    success: function (layero, index) {
+                        $(".layui-form input[name='adminId']").val(obj.data.adminId);
+                        $("#name").val(obj.data.adminName);
+                        $(".layui-form input[name='adminPsw']").val(obj.data.adminPsw);
+                        $(".layui-form input[name='readminPsw']").val();
+                        $(".layui-form input[name='adminSex'][value='"+obj.data.adminSex+"']").attr('checked','true');
+                        $(".layui-form input[name='adminphone']").val(obj.data.phone);
+                        $(".layui-form input[name='entry_time']").val(obj.data.entry_time);
+                    },
+                 });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            } else if (obj.event === 'delete') {//监听删除操作
+                 console.log("删除");
+                layer.confirm('真的删除行么', function (index) {
+                    $.post({
+                        url: "tbAdmin/delete",
+                        data: {
+                            'id': data.adminId
+                        },
+                        success: function (res) {
+                            if (res){
+                                obj.del();
+                            }else{
+                                layer.alert("删除失败！！！");
+                            }
+                            layer.close(index);
+                        }
+                    });
+                });
+            }
+        });
+
+    });
+</script>

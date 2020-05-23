@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liyi.part_time.dao.TbFeedbackDao">
+
+    <resultMap type="com.liyi.part_time.entity.TbFeedback" id="TbFeedbackMap">
+        <result property="feedbackId" column="feedback_id" jdbcType="INTEGER"/>
+        <result property="hunterId" column="hunter_id" jdbcType="INTEGER"/>
+        <result property="businessId" column="business_id" jdbcType="INTEGER"/>
+        <result property="jobId" column="job_id" jdbcType="INTEGER"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="evaluation" column="evaluation" jdbcType="VARCHAR"/>
+        <result property="isassrest" column="isassrest" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+
+    <resultMap type="com.liyi.part_time.vo.FeedBackVO" id="TbFeedbackVOMap">
+        <result property="feedbackId" column="feedback_id" jdbcType="INTEGER"/>
+        <result property="hunterId" column="hunter_id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="businessId" column="business_id" jdbcType="INTEGER"/>
+        <result property="businessName" column="business_name" jdbcType="VARCHAR"/>
+        <result property="jobId" column="job_id" jdbcType="INTEGER"/>
+        <result property="jobName" column="job_name" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="evaluation" column="evaluation" jdbcType="VARCHAR"/>
+        <result property="isassrest" column="isassrest" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="OTHER"/>
+
+    </resultMap>
+
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TbFeedbackMap">
+        select
+          * from part_time.tb_feedback
+        where feedback_id = #{feedbackId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TbFeedbackMap">
+        select
+         * from part_time.tb_feedback
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="TbFeedbackMap">
+        select
+          feedback_id, name, hunter_id, business_id,  job_id, evaluation, isassrest, create_time, email, user_id
+        from part_time.tb_feedback
+        <where>
+            <if test="feedbackId != null">
+                and feedback_id = #{feedbackId}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="hunterId != null">
+                and hunter_id = #{hunterId}
+            </if>
+            <if test="businessId != null">
+                and business_id = #{businessId}
+            </if>
+            <if test="jobId != null">
+                and job_id = #{jobId}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="evaluation != null and evaluation != ''">
+                and evaluation = #{evaluation}
+            </if>
+            <if test="isassrest != null">
+                and isassrest = #{isassrest}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="feedbackId" useGeneratedKeys="true">
+        insert into part_time.tb_feedback(hunter_id, business_id,job_id, email,evaluation, isassrest, create_time)
+        values (#{hunterId},#{businessId}, #{jobId}, #{email},#{evaluation}, #{isassrest}, #{createTime})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update part_time.tb_feedback
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="jobId != null">
+                job_id = #{jobId},
+            </if>
+            <if test="evaluation != null and evaluation != ''">
+                evaluation = #{evaluation},
+            </if>
+            <if test="isassrest != null">
+                isassrest = #{isassrest},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+        </set>
+        where feedback_id = #{feedbackId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from part_time.tb_feedback where feedback_id = #{feedbackId}
+    </delete>
+
+    <!--获取总记录数-->
+    <select id="getCount" resultType="int">
+        select IFNULL(count(feedback_id), 0) from part_time.tb_feedback,part_time.tb_job_hunter,part_time.tb_business,part_time.tb_job
+        <where>
+            tb_feedback.hunter_id=tb_job_hunter.job_hunter_id and tb_feedback.business_id = tb_business.business_id and tb_feedback.job_id = tb_job_hunter.job_id
+            <if test="realName != null and realName != ''">
+                and tb_job_hunter.real_name like '%${realName}%'
+            </if>
+            <if test="businessName != null and businessName != ''">
+                and tb_business.business_name like '%${businessName}%'
+            </if>
+            <if test="jobName != null and jobName != ''">
+                and tb_job.job_name like '%${jobName}%'
+            </if>
+            <if test="isassrest != null">
+                and isassrest = #{isassrest}
+            </if>
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="pageByVOCondition" resultMap="TbFeedbackVOMap">
+        select * from part_time.tb_feedback,part_time.tb_job_hunter,part_time.tb_business,part_time.tb_job,
+        <where>
+            tb_feedback.hunter_id=tb_job_hunter.job_hunter_id and tb_feedback.business_id = tb_business.business_id and tb_feedback.job_id = tb_job.job_id
+            <if test="condition != null">
+                <if test="condition.realName != null and condition.realName != ''">
+                    and tb_job_hunter.real_name like '%${condition.realName}%'
+                </if>
+                <if test="condition.businessName != null and condition.businessName != ''">
+                    and tb_business.business_name like '%${condition.businessName}%'
+                </if>
+                <if test="condition.jobName != null and condition.jobName != ''">
+                    and tb_job.job_name like '%${condition.jobName}%'
+                </if>
+                <if test="condition.isassrest != null">
+                    and isassrest = #{condition.isassrest}
+                </if>
+            </if>
+        </where>
+        LIMIT #{page}, #{limit}
+    </select>
+
+
+    <!--获取总记录数-->
+    <select id="getCountWithTime" resultType="int">
+        select IFNULL(count(feedback_id), 0) from part_time.tb_feedback,part_time.tb_job_hunter,part_time.tb_business,part_time.tb_job,part_time.tb_resume
+        <where>
+            tb_feedback.hunter_id=tb_job_hunter.job_hunter_id and tb_feedback.business_id = tb_business.business_id and tb_feedback.job_id = tb_job.job_id and tb_job_hunter.job_hunter_id=tb_resume.job_hunter_id
+            <if test="realName != null and realName != ''">
+                and tb_resume.name like '%${realName}%'
+            </if>
+            <if test="businessName != null and businessName != ''">
+                and tb_business.business_name like '%${businessName}%'
+            </if>
+            <if test="jobName != null and jobName != ''">
+                and tb_job.job_name like '%${jobName}%'
+            </if>
+            <if test="isassrest != null">
+                and isassrest = #{isassrest}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and tb_feedback.create_time <![CDATA[>=]]> #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and tb_feedback.create_time <![CDATA[<=]]>#{endDate}
+            </if>
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="pageByConditionWithTime" resultMap="TbFeedbackVOMap">
+        select * from part_time.tb_feedback,part_time.tb_job_hunter,part_time.tb_business,part_time.tb_job,part_time.tb_resume
+        <where>
+            tb_feedback.hunter_id=tb_job_hunter.job_hunter_id and tb_feedback.business_id = tb_business.business_id and tb_feedback.job_id = tb_job.job_id and tb_job_hunter.job_hunter_id=tb_resume.job_hunter_id
+            <if test="realName != null and realName != ''">
+                and tb_resume.name  like '%${realName}%'
+            </if>
+            <if test="businessName != null and businessName != ''">
+                and tb_business.business_name like '%${businessName}%'
+            </if>
+            <if test="jobName != null and jobName != ''">
+                and tb_job.job_name like '%${jobName}%'
+            </if>
+            <if test="isassrest != null">
+                and isassrest = #{isassrest}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and tb_feedback.create_time <![CDATA[>=]]> #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and tb_feedback.create_time <![CDATA[<=]]>#{endDate}
+            </if>
+        </where>
+        order by tb_feedback.create_time LIMIT #{page}, #{limit}
+    </select>
+
+    <!--获取详情-->
+    <select id="getDetail" resultMap="TbFeedbackVOMap">
+         select * from part_time.tb_feedback,part_time.tb_job_hunter,part_time.tb_business,part_time.tb_job
+         and tb_feedback.feedback_id = #{feedbackId}
+    </select>
+
+    <select id="getstates" resultMap="TbFeedbackVOMap">
+        select distinct(isassrest) from part_time.tb_feedback
+    </select>
+
+    <select id="getNum" resultType="int">
+        select IFNULL(count(feedback_id), 0) from part_time.tb_feedback
+    </select>
+
+</mapper>

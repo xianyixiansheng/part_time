@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liyi.part_time.dao.TbBusinessDao">
+
+    <resultMap type="com.liyi.part_time.entity.TbBusiness" id="TbBusinessMap">
+        <result property="businessId" column="business_id" jdbcType="INTEGER"/>
+        <result property="businessUsername" column="business_username" jdbcType="VARCHAR"/>
+        <result property="businessPsw" column="business_psw" jdbcType="VARCHAR"/>
+        <result property="businessName" column="business_name" jdbcType="VARCHAR"/>
+        <result property="businessWxcode" column="business_wxcode" jdbcType="VARCHAR"/>
+        <result property="businessWxName" column="business_wxName" jdbcType="VARCHAR"/>
+        <result property="businessImg" column="business_img" jdbcType="VARCHAR"/>
+        <result property="brief" column="brief" jdbcType="VARCHAR"/>
+        <result property="capital" column="capital" jdbcType="VARCHAR"/>
+        <result property="creditCode" column="creditCode" jdbcType="CHAR"/>
+        <result property="companyrange" column="companyrange" jdbcType="VARCHAR"/>
+        <result property="foundtime" column="foundtime" jdbcType="OTHER"/>
+        <result property="businessTrade" column="business_trade" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="contact" column="contact" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="telephone" column="telephone" jdbcType="VARCHAR"/>
+        <result property="license" column="license" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+        <result property="forbidden" column="forbidden" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+    <!-- 关联的外键的ResultMap -->
+    <resultMap  id="TbBusinessMapWithFK" type="com.liyi.part_time.entity.TbBusiness" extends="TbBusinessMap">
+        <collection property="tbJob" resultMap="com.liyi.part_time.dao.TbJobDao.TbJobMap">
+        </collection>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TbBusinessMap">
+        select
+          * from part_time.tb_business
+        where business_id = #{businessId}
+    </select>
+
+
+    <!--通过微信id获取用户信息-->
+    <select id="queryByWxCode" resultMap="TbBusinessMap">
+        SELECT * FROM part_time.tb_business
+        WHERE business_wxcode = #{businessWxcode}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TbBusinessMap">
+        select
+          * from part_time.tb_business
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="TbBusinessMap">
+        select
+          * from part_time.tb_business
+        <where>
+            <if test="businessId != null">
+                and business_id = #{businessId}
+            </if>
+            <if test="businessUsername != null and businessUsername != ''">
+                and business_username = #{businessUsername}
+            </if>
+            <if test="businessPsw != null and businessPsw != ''">
+                and business_psw = #{businessPsw}
+            </if>
+            <if test="businessName != null and businessName != ''">
+                and business_name = #{businessName}
+            </if>
+            <if test="businessTrade != null and businessTrade != ''">
+                and business_trade = #{businessTrade}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+            <if test="contact != null and contact != ''">
+                and contact = #{contact}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="telephone != null and telephone != ''">
+                and telephone = #{telephone}
+            </if>
+            <if test="license != null">
+                and license = #{license}
+            </if>
+            <if test="state != null">
+                and state = #{state}
+            </if>
+            <if test="forbidden != null">
+                and forbidden = #{forbidden}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="businessId" useGeneratedKeys="true">
+        insert into part_time.tb_business(business_username, business_psw, brief,business_name,business_wxcode,business_wxName,business_img, capital,creditCode,business_trade, address,companyrange, contact, email, foundtime,telephone, license, state, forbidden)
+        values (#{businessUsername}, #{businessPsw},#{brief}, #{businessName},#{businessWxcode},#{businessWxName},#{businessImg},#{capital}, #{creditCode},#{businessTrade}, #{address},#{companyrange}, #{contact}, #{email},#{foundtime}, #{telephone}, #{license}, #{state}, #{forbidden})
+    </insert>
+
+    <update id="setWxInfo">
+        update part_time.tb_business
+        set business_wxName = #{businessWxName},business_img = #{businessImg}
+        where business_id = #{businessId}
+    </update>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update part_time.tb_business
+        <set>
+            <if test="businessUsername != null and businessUsername != ''">
+                business_username = #{businessUsername},
+            </if>
+            <if test="businessPsw != null and businessPsw != ''">
+                business_psw = #{businessPsw},
+            </if>
+            <if test="businessWxcode != null and businessWxcode != ''">
+                business_wxcode = #{businessWxcode},
+            </if>
+            <if test="businessWxName != null and businessWxName != ''">
+                business_wxName = #{businessWxName},
+            </if>
+            <if test="businessImg != null and businessImg != ''">
+                business_img = #{businessImg},
+            </if>
+            <if test="businessTrade != null and businessTrade != ''">
+                business_trade = #{businessTrade},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="contact != null and contact != ''">
+                contact = #{contact},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="telephone != null and telephone != ''">
+                telephone = #{telephone},
+            </if>
+            <if test="license != null">
+                license = #{license},
+            </if>
+                state = 1,
+                forbidden = 0,
+            <if test="brief != null and brief != ''">
+                brief = #{brief},
+            </if>
+            <if test="capital != null and capital != ''">
+                capital = #{capital},
+            </if>
+            <if test="creditCode != null and creditCode != ''">
+                creditCode = #{creditCode},
+            </if>
+            <if test="foundtime != null and foundtime != ''">
+                foundtime = #{foundtime},
+            </if>
+            <if test="companyrange != null and companyrange != ''">
+                companyrange = #{companyrange},
+            </if>
+        </set>
+        where business_id = #{businessId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from part_time.tb_business where business_id = #{businessId}
+    </delete>
+
+    <!--通过主键删除外键-->
+    <delete id="deleteByIdwithFK">
+          delete a.*,b.* from tb_business a,tb_job b where a.business_id =#{businessId} and a.business_id=b.businessid
+    </delete>
+
+    <!--批量删除数据-->
+    <delete id="batchDelete">
+        delete from part_time.tb_business
+        where business_id IN
+        <foreach collection="List" item="item"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+
+    <!--批量删除数据-->
+    <delete id="batchDeletewithFK">
+        delete a.*,b.* from tb_business a,tb_job b
+        where a.business_id=b.businessid
+        and a.business_id IN
+        <foreach collection="List" item="item"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!--获取总记录数-->
+    <select id="getCount" resultType="int">
+        select IFNULL(count(business_id), 0) from part_time.tb_business
+        <where>
+            <if test="businessName != null and businessName != ''">
+                and business_name like '%${businessName}%'
+            </if>
+            <if test="businessTrade != null and businessTrade != ''">
+                and business_trade  like '%${businessTrade}%'
+            </if>
+            <if test="telephone != null and telephone != ''">
+                and telephone like '%${telephone}%'
+            </if>
+            <if test="state != null and state != ''">
+                and state = #{state}
+            </if>
+                and forbidden  = 1
+        </where>
+    </select>
+
+    <!--获取总记录数-->
+    <select id="getCountWithAudit" resultType="int">
+        select IFNULL(count(business_id), 0) from part_time.tb_business
+        <where>
+            <if test="businessName != null and businessName != ''">
+                and business_name like '%${businessName}%'
+            </if>
+            <if test="businessTrade != null and businessTrade != ''">
+                and business_trade  like '%${businessTrade}%'
+            </if>
+            <if test="telephone != null and telephone != ''">
+                and telephone like '%${telephone}%'
+            </if>
+            <if test="state != null and state != ''">
+                and state = #{state}
+            </if>
+            and forbidden  = 0
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="pageByCondition" resultMap="TbBusinessMap">
+        select * from part_time.tb_business
+        <where>
+            <if test="condition != null">
+                <if test="condition.businessName != null and condition.businessName != ''">
+                    and business_name like '%${condition.businessName}%'
+                </if>
+                <if test="condition.businessTrade != null and condition.businessTrade != ''">
+                    and business_trade = #{condition.businessTrade}
+                </if>
+                <if test="condition.creditCode != null and condition.creditCode != ''">
+                    and creditCode like '%${condition.creditCode}%'
+                </if>
+            </if>
+            and forbidden  = 1
+        </where>
+        LIMIT #{page}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="pageByConditionWithAudit" resultMap="TbBusinessMap">
+        select * from part_time.tb_business
+        <where>
+            <if test="condition != null">
+                <if test="condition.businessName != null and condition.businessName != ''">
+                    and business_name like '%${condition.businessName}%'
+                </if>
+                <if test="condition.businessTrade != null and condition.businessTrade != ''">
+                    and business_trade = #{condition.businessTrade}
+                </if>
+                <if test="condition.creditCode != null and condition.creditCode != ''">
+                    and creditCode like '%${condition.creditCode}%'
+                </if>
+            </if>
+            and forbidden  = 0
+        </where>
+        LIMIT #{page}, #{limit}
+    </select>
+
+    <select id="getDetail" resultMap="TbBusinessMapWithFK">
+         select * from tb_business,tb_job
+         where tb_job.businessid = tb_business.business_id and tb_business.business_id=#{businessId}
+    </select>
+
+
+    <!--通过主键修改数据-->
+    <update id="updateforbidden">
+        update part_time.tb_business
+        <set>
+            <if test="forbidden !=null">
+                forbidden = 2,
+            </if>
+        </set>
+        where business_id = #{businessId}
+    </update>
+
+
+    <!--通过主键修改数据-->
+    <update id="updatepass">
+        update part_time.tb_business
+        <set>
+            <if test="forbidden !=null">
+                forbidden = 1,
+            </if>
+        </set>
+        where business_id = #{businessId}
+    </update>
+
+    <select id="getNum" resultType="int">
+        select IFNULL(count(business_id), 0) from part_time.tb_business where tb_business.forbidden = 1
+    </select>
+
+</mapper>

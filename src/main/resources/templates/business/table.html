@@ -1,0 +1,226 @@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">企业名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="businessName" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">企业类型</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="businessTrade" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">联系电话</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="telephone" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <!--<div class="layui-inline">-->
+                            <!--<label class="layui-form-label">验证状态</label>-->
+                            <!--<div class="layui-input-inline">-->
+                                <!--<input type="text" name="state" autocomplete="off" class="layui-input">-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="layui-inline">-->
+                            <!--<label class="layui-form-label">禁用状态</label>-->
+                            <!--<div class="layui-input-inline">-->
+                                <!--<input type="text" name="forbidden" autocomplete="off" class="layui-input">-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除企业 </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <!--<a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>-->
+            <!--<a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>-->
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="detail">详情</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="forbidden">禁用</a>
+
+        </script>
+
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'table','miniPage','element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            miniPage = layui.miniPage;
+
+        table.render({
+            elem: '#currentTableId',
+            url: 'http://localhost:8082/tbBusiness/getLayuiPage',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            cols: [
+                [
+                {type: "checkbox", width: 50, fixed: "left"},
+                {field: 'businessId', width: 80, title: 'ID', sort: true,align:'center'},
+                {field: 'businessName', width: 110, title: '企业名称', sort: true,align:'center'},
+                {field: 'businessTrade', width: 100, title: '企业类型', sort: true,align:'center'},
+                {field: 'address', width: 400,title: '地址', sort: true,align:'center'},
+                {field: 'telephone', width: 150, title: '联系电话', sort: true,align:'center'},
+                {title: '操作', minWidth: 200, templet: '#currentTableBar', fixed: "right",sort: true,align: "center"}
+            ]
+            ],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: true
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            var result = JSON.stringify(data.field);
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    searchParams: result
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        /**
+         * toolbar事件监听
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+         if (obj.event === 'delete') {  // 监听删除操作
+                    var checkStatus = table.checkStatus('currentTableId')
+                        , data = checkStatus.data;
+                     if (null != data && data.length > 0){
+                         layer.confirm("确定要删除吗？",function (index) {
+                             var List = new Array();
+                             $.each(data,function (i,item) {
+                                 List.push(item.businessId);
+                             });
+                             $.ajax({
+                                 type: 'POST',
+                                 url: "tbBusiness/batchDeletewithFK",
+                                 data: {
+                                     'ids': List
+                                 },
+                                 cache:false,
+                                 dataType:'json',
+                                 async:true,
+                                 traditional:true,//这个参数必须添加，采用传统方式转换
+                                 success: function (res) {
+                                     console.log(res);
+                                     layer.alert("删除成功");
+                                     // obj.del();
+                                     table.reload('currentTableId',{});
+                                     layer.close(index);
+                                 },
+                                 error:function (res) {
+                                     console.log(res);
+                                     layer.close(index);
+                                     layer.alert("删除失败！！！");
+                                 }
+                             });
+                         });
+                     }
+                }
+            });
+
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'forbidden') {
+                layer.confirm('确定禁用吗？', function (index) {
+                    $.post({
+                        url: "tbBusiness/updateforbidden",
+                        data: {
+                            'id': data.businessId
+                        },
+                        success: function (res) {
+                            if (res){
+                                layer.alert("禁用成功！！！");
+                                table.reload('currentTableId',{});
+                            }else{
+                                layer.alert("禁用失败！！！");
+                            }
+                            layer.close(index);
+                        }
+                    });
+                });
+            }
+            else if(obj.event === 'detail')
+            {
+                var content = miniPage.getHrefContent('businessDetail');
+                var openWH = miniPage.getOpenWidthHeight();
+                // console.log(data);
+                // console.log(data.businessId);
+                var index = layer.open({
+                    title: '企业详情',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                    success: function (layero, index) {
+                        $.getJSON("/tbBusiness/getDetail?id="+data.businessId,function (res) {
+                            $("#detail-form input[name='businessName']").val(res[0].businessName);
+                            $("#detail-form input[name='businessUsername']").val(res[0].businessUsername);
+                            $("#detail-form input[name='businessTrade']").val(res[0].businessTrade);
+                            $("#detail-form input[name='address']").val(res[0].address);
+                            $("#detail-form input[name='email']").val(res[0].email);
+                            $.each(res[0].tbJob,function (i,item) {
+                                const content = "<li  style='margin:5px 300px 5px 150px;border-bottom: 1px solid #CCCCCC;padding-left: 10px;height: 80px;position: relative'>\n" +
+                                    "<span style='float: left;width: 50%;font-size:20px;height: 30px;'>"+item.jobName+"</span>" +"<span  style='float: left;width: 50%;height: 30px;line-height: 30px;color: #33CC99'>"+item.salary+"</span>" +
+                                    "<span style='float: left;width: 50%;height: 25px;line-height: 25px;font-size: 10px;color: #9c9da0;'>"+item.address+"</span>"+ "<span style='float: left;width: 50%;height: 25px;line-height: 25px;color: #9c9da0;'>" +item.worktime+"</span>" +
+                                    "<span style='float: left;width: 50%;height: 25px;line-height: 25px;color: #9c9da0;'>"+item.contact+"  招聘者"+"</span>" + "<span style='float: left;width: 50%;height: 25px;line-height: 25px;color: #9c9da0;'>"+"招聘人数："+item.reqnum+"</span>" +
+                                    "</li>";
+                                $(".jobList").append(content);
+                            });
+                            form.render();
+                        });
+                    },
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            }
+
+
+        });
+
+    });
+</script>
