@@ -26,6 +26,7 @@ import java.util.List;
  * @since 2020-03-24 00:25:57
  */
 @Controller
+@CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST})
 @RequestMapping("tbAdmin")
 public class TbAdminController extends BaseController<TbAdmin> {
     /**

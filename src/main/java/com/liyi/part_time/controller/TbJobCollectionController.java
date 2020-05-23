@@ -14,6 +14,7 @@ import javax.annotation.Resource;
  * @since 2020-03-24 00:28:05
  */
 @RestController
+@CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST})
 @RequestMapping("tbJobCollection")
 public class TbJobCollectionController {
     /**

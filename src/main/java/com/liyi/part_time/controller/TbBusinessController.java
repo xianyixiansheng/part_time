@@ -23,6 +23,7 @@ import java.util.List;
  * @since 2020-03-24 00:28:06
  */
 @RestController
+@CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST})
 @RequestMapping("tbBusiness")
 public class TbBusinessController extends  BaseController<TbBusiness>{
     /**

@@ -13,6 +13,7 @@ import javax.annotation.Resource;
  * @since 2020-03-24 00:28:08
  */
 @RestController
+@CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST})
 @RequestMapping("tbResumeCollection")
 public class TbResumeCollectionController {
     /**

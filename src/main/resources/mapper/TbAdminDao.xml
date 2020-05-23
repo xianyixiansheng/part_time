@@ -138,8 +138,8 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="adminId" useGeneratedKeys="true">
-        insert into part_time.tb_admin(admin_name, admin_psw, admin_img,sex,phone,entry_time,state)
-        values (#{adminName}, #{adminPsw}, #{adminImg},#{adminSex}, #{phone},#{entry_time},#{state})
+        insert into part_time.tb_admin(admin_name, admin_psw,sex,phone,entry_time,state)
+        values (#{adminName}, #{adminPsw},#{adminSex}, #{phone},#{entry_time},#{state})
     </insert>
 
     <!--通过主键修改数据-->

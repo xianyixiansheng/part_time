@@ -18,6 +18,7 @@ import java.util.List;
  * @since 2020-04-08 21:29:57
  */
 @RestController
+@CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST})
 @RequestMapping("tbFeedback")
 public class TbFeedbackController  extends BaseController<TbFeedback> {
     /**

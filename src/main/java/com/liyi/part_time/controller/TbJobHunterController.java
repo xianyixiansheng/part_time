@@ -20,6 +20,7 @@ import java.util.Map;
  * @since 2020-03-24 00:28:09
  */
 @RestController
+@CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST})
 @RequestMapping("tbJobHunter")
 public class TbJobHunterController extends BaseController<TbJobHunter>{
     /**

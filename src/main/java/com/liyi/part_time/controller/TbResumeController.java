@@ -15,6 +15,7 @@ import java.util.List;
  * @since 2020-03-24 00:28:08
  */
 @RestController
+@CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST})
 @RequestMapping("tbResume")
 public class TbResumeController {
     /**
