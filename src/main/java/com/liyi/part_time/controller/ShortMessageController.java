@@ -1,10 +1,7 @@
 package com.liyi.part_time.controller;
 import com.alibaba.fastjson.JSONObject;
-import com.liyi.part_time.Result.Result;
 import com.liyi.part_time.Result.ResultFactory;
-import com.liyi.part_time.entity.TbAdmin;
 import com.liyi.part_time.service.TbAdminService;
-import com.ndktools.javamd5.Mademd5;
 import com.zhenzi.sms.ZhenziSmsClient;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;

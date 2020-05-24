@@ -2,7 +2,6 @@ package com.liyi.part_time.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.liyi.part_time.entity.TbAdmin;
-import com.liyi.part_time.entity.TbJob;
 import com.liyi.part_time.service.TbAdminService;
 import com.liyi.part_time.util.BaseController;
 import com.liyi.part_time.util.LayuiPage;
@@ -17,7 +16,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * (TbAdmin)表控制层
