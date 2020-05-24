@@ -6,7 +6,7 @@ import com.liyi.part_time.service.TbAdminService;
 import com.liyi.part_time.util.BaseController;
 import com.liyi.part_time.util.LayuiPage;
 import com.liyi.part_time.Result.*;
-import com.ndktools.javamd5.Mademd5;
+//import com.ndktools.javamd5.Mademd5;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -63,9 +63,10 @@ public class TbAdminController extends BaseController<TbAdmin> {
         }
         TbAdmin tbAdmin =  new TbAdmin();
         tbAdmin.setAdminName(adminName);
-        Mademd5 md5 = new Mademd5();//new一个MD5对象
-        String pswwithMD5andsalt = md5.toMd5(adminPsw+"Liyi123!@#");//调用方法进行加盐加密
-        tbAdmin.setAdminPsw(pswwithMD5andsalt);
+//        Mademd5 md5 = new Mademd5();//new一个MD5对象
+//        String pswwithMD5andsalt = md5.toMd5(adminPsw+"Liyi123!@#");//调用方法进行加盐加密
+//        tbAdmin.setAdminPsw(pswwithMD5andsalt);
+        tbAdmin.setAdminPsw(adminPsw);
         tbAdmin.setPhone(phone);
         tbAdmin.setEntry_time(entry_time);
         tbAdmin.setAdminSex(adminSex);
@@ -85,8 +86,8 @@ public class TbAdminController extends BaseController<TbAdmin> {
         String upperCasestr=session.getAttribute("validateCode").toString().toUpperCase();
         System.out.println(lowerCasestr);
         TbAdmin tbAdmin = tbAdminService.queryByName(username);
-        Mademd5 md5 = new Mademd5();//new一个MD5对象
-        String pswwithMD5andsalt = md5.toMd5(password+"Liyi123!@#");//调用方法进行加盐加密
+//        Mademd5 md5 = new Mademd5();//new一个MD5对象
+//        String pswwithMD5andsalt = md5.toMd5(password+"Liyi123!@#");//调用方法进行加盐加密
         if(!lowerCasestr.equals(captcha)&&!upperCasestr.equals(captcha)&&!session.getAttribute("validateCode").toString().equals(captcha))//说明验证码不匹配
         {
             return ResultFactory.buildFailResult("登录失败，验证码不存在");
@@ -95,7 +96,7 @@ public class TbAdminController extends BaseController<TbAdmin> {
         {
             return ResultFactory.buildFailResult("登录失败，用户名不存在");
         }
-        else if(!pswwithMD5andsalt.equals( tbAdmin.getAdminPsw()))
+        else if(!password.equals( tbAdmin.getAdminPsw()))
         {
             return ResultFactory.buildFailResult("登录失败，密码不存在");
         }
@@ -121,16 +122,17 @@ public class TbAdminController extends BaseController<TbAdmin> {
         HttpSession session = request.getSession();
         String username=session.getAttribute("user_name").toString();
         TbAdmin tbAdmin = tbAdminService.queryByName(username);
-        Mademd5 md5 = new Mademd5();//new一个MD5对象
-        String pswwithMD5andsalt = md5.toMd5(old_password+"Liyi123!@#");//调用方法进行加盐加密
-        if(!pswwithMD5andsalt.equals(tbAdmin.getAdminPsw()))
+//        Mademd5 md5 = new Mademd5();//new一个MD5对象
+//        String pswwithMD5andsalt = md5.toMd5(old_password+"Liyi123!@#");//调用方法进行加盐加密
+        if(!old_password.equals(tbAdmin.getAdminPsw()))
         {
             return ResultFactory.buildFailResult("修改失败，旧密码错误！");
         }
         else
         {
-            String newpswwithMD5andsalt = md5.toMd5(new_password+"Liyi123!@#");//调用方法进行加盐加密
-            tbAdmin.setAdminPsw(newpswwithMD5andsalt);
+//            String newpswwithMD5andsalt = md5.toMd5(new_password+"Liyi123!@#");//调用方法进行加盐加密
+//            tbAdmin.setAdminPsw(newpswwithMD5andsalt);
+            tbAdmin.setAdminPsw(new_password);
             tbAdminService.update(tbAdmin);
             return ResultFactory.buildSuccessResult("修改成功", tbAdmin);
         }
