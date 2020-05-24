@@ -25,7 +25,7 @@
         <result property="email" column="email" jdbcType="VARCHAR"/>
         <result property="evaluation" column="evaluation" jdbcType="VARCHAR"/>
         <result property="isassrest" column="isassrest" jdbcType="INTEGER"/>
-        <result property="createTime" column="create_time" jdbcType="OTHER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
 
     </resultMap>
 

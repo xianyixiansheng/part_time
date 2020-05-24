@@ -231,6 +231,7 @@
                     offset: [openWH[2] + 'px', openWH[3] + 'px'],
                     content: content,
                     success: function (layero, index) {
+                        console.log(obj.data.phone)
                         $(".layui-form input[name='adminId']").val(obj.data.adminId);
                         $("#name").val(obj.data.adminName);
                         $(".layui-form input[name='adminPsw']").val(obj.data.adminPsw);
