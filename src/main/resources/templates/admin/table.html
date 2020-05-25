@@ -7,13 +7,13 @@
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label" style="width:80px;">管理员名</label>
-                            <div class="layui-input-inline" style="width:150px;">
+                            <label class="layui-form-label">管理员名</label>
+                            <div class="layui-input-inline">
                                 <input type="text" name="adminName" autocomplete="off" class="layui-input" style="width:150px;">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label" style="width: 100px;">管理员性别</label>
+                            <label class="layui-form-label">管理员性别</label>
                             <div class="layui-input-inline">
                                 <!--<input type="text" name="adminSex" autocomplete="off" class="layui-input">-->
                                 <select name="adminSex" id="adminSex">
@@ -231,12 +231,13 @@
                     offset: [openWH[2] + 'px', openWH[3] + 'px'],
                     content: content,
                     success: function (layero, index) {
-                        console.log(obj.data.phone)
+                        console.log(obj.data.adminSex)
                         $(".layui-form input[name='adminId']").val(obj.data.adminId);
                         $("#name").val(obj.data.adminName);
-                        $(".layui-form input[name='adminPsw']").val(obj.data.adminPsw);
+                        $(".layui-form input[name='adminPsw']").val();
                         $(".layui-form input[name='readminPsw']").val();
-                        $(".layui-form input[name='adminSex'][value='"+obj.data.adminSex+"']").attr('checked','true');
+                        $(".layui-form input[name='adminwithSex'][value='"+obj.data.adminSex+"']").prop("checked", "checked")
+                        form.render();
                         $(".layui-form input[name='adminphone']").val(obj.data.phone);
                         $(".layui-form input[name='entry_time']").val(obj.data.entry_time);
                     },

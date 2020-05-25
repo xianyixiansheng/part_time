@@ -122,7 +122,6 @@ public class TbAdminController extends BaseController<TbAdmin> {
     }
 
 
-
     @RequestMapping("updatePsw")
     @ResponseBody
     public Result updatePsw(String old_password,String new_password)
@@ -159,6 +158,39 @@ public class TbAdminController extends BaseController<TbAdmin> {
         HttpSession session = request.getSession();
         String name=session.getAttribute("user_name").toString();
         TbAdmin tbAdmin = tbAdminService.queryByName(name);
+        tbAdmin.setAdminName(adminName);
+        tbAdmin.setAdminSex(adminSex);
+        tbAdmin.setPhone(adminphone);
+        tbAdmin.setEntry_time(entry_time);
+        if(tbAdminService.update(tbAdmin)!=null)
+        {
+            session.setAttribute("user_name", tbAdmin.getAdminName());
+            session.setAttribute("user_sex", tbAdmin.getAdminSex());
+            session.setAttribute("user_phone",tbAdmin.getPhone());
+            session.setAttribute("user_Entrytime",tbAdmin.getEntry_time());
+            return ResultFactory.buildSuccessResult("修改基本信息成功", tbAdmin);
+        }
+        else
+        {
+            return ResultFactory.buildFailResult("修改失败，旧密码错误！");
+        }
+    }
+
+
+    @RequestMapping("updateAll")
+    @ResponseBody
+    public Result updateInfo(String adminName,String adminPsw,String adminSex,String adminphone,String entry_time)
+    {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpSession session = request.getSession();
+        TbAdmin tbAdmin = tbAdminService.queryByName(adminName);
+        PasswordUtil p = new PasswordUtil();
+        String newpswwithMD5andsalt = p.generate(adminPsw);
+        if(!p.verify(adminPsw, tbAdmin.getAdminPsw()))
+        {
+            return ResultFactory.buildFailResult("修改失败，旧密码错误！");
+        }
+        tbAdmin.setAdminPsw(newpswwithMD5andsalt);
         tbAdmin.setAdminName(adminName);
         tbAdmin.setAdminSex(adminSex);
         tbAdmin.setPhone(adminphone);

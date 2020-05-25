@@ -67,6 +67,7 @@
                 console.log(res.adminSex)
                 $("input[name='adminSex'][value='"+res.adminSex+"']").attr('checked','checked');
                 // $(".layui-form input[name='adminSex']").val(res.adminSex);
+                form.render();
                 $(".layui-form input[name='adminphone']").val(res.phone);
                 $(".layui-form input[name='entry_time']").val(res.entry_time);
             }

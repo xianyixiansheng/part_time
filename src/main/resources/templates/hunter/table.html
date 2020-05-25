@@ -226,14 +226,9 @@
                             $(".layui-form input[name='hunterwxname']").val(obj.data.wxName);
                             $(".layui-form input[name='hunterphone']").val(obj.data.phone);
                             $(".layui-form input[name='hunterage']").val(obj.data.age);
-                            let state = "";
-                            switch (obj.data.sex) {
-                                case "男": state = "男";break;
-                                case "女": state = "女";break;
-                                default: break;
-                            }
-                            $(".layui-form input[name='hunterSex']").val(state);
-                            $(".layui-form input[name='hunterSex']").attr("disabled", "true");
+                            $(".layui-form input[name='hunterSex'][value='"+obj.data.sex+"']").prop("checked", "checked")
+                            $(".layui-form input[name='hunterSex']").prop("disabled", true)
+                            form.render();
                             $(".layui-form input[name='hunternation']").val(obj.data.nation);
                             $(".layui-form input[name='hunterschool']").val(obj.data.eduschool);
                             $(".layui-form input[name='huntermajor']").val(obj.data.edumajor);
