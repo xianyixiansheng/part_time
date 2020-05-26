@@ -46,6 +46,7 @@
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-password" for="adminPsw"></label>
                     <input id="adminPsw" type="password" name="adminPsw" autocomplete="off" class="layui-input" lay-verify="required|password" placeholder="用户密码" >
+                    <tip  style="font-size:2px;" name="adminPswtip">密码的格式为6-12位，只能是字母、数字和下划线</tip>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-cellphone" for="phone"></label>
@@ -153,6 +154,18 @@
 
 
 
+        $(".layui-form input[name='adminPsw']").blur(function(){
+            var res=$(".layui-form input[name='adminPsw']").val();
+            var reg = /^[\d_a-zA-Z]{6,12}$/
+            if(res.match(reg))
+            {
+                $(".layui-form tip[name='adminPswtip']").text("密码格式输入正确。")
+            }else
+            {
+                $(".layui-form tip[name='adminPswtip']").text("密码格式输入错误,请重新输入")
+                $(".layui-form input[name='adminPsw']").val("");
+            }
+        });
 
         form.render();
         // 监听绑定操作
