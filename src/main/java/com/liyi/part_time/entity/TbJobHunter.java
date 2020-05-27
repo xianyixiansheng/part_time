@@ -24,8 +24,6 @@ public class TbJobHunter implements Serializable {
     private String sex;
 
     private Object createTime;
-    
-    private Integer state;
 
 
 
@@ -84,14 +82,6 @@ public class TbJobHunter implements Serializable {
 
     public void setCreateTime(Object createTime) {
         this.createTime = createTime;
-    }
-
-    public Integer getState() {
-        return state;
-    }
-
-    public void setState(Integer state) {
-        this.state = state;
     }
 
 }

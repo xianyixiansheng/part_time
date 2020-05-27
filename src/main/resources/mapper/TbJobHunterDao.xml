@@ -9,7 +9,6 @@
         <result property="img" column="img" jdbcType="VARCHAR"/>
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="OTHER"/>
-        <result property="state" column="state" jdbcType="INTEGER"/>
     </resultMap>
 
 
@@ -20,7 +19,6 @@
         <result property="img" column="img" jdbcType="VARCHAR"/>
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="OTHER"/>
-        <result property="state" column="state" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="sex" column="sex" jdbcType="VARCHAR"/>
         <result property="age" column="age" jdbcType="INTEGER"/>
