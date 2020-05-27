@@ -8,6 +8,7 @@
         <result property="wxName" column="wx_name" jdbcType="VARCHAR"/>
         <result property="img" column="img" jdbcType="VARCHAR"/>
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="OTHER"/>
     </resultMap>
 
@@ -60,22 +61,22 @@
             <if test="img != null and img != ''">
                 and img = #{img}
             </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
             <if test="phone != null and phone != ''">
                 and phone = #{phone}
             </if>
             <if test="createTime != null">
                 and create_time = #{createTime}
             </if>
-            <if test="state != null">
-                and state = #{state}
-            </if>
         </where>
     </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="jobHunterId" useGeneratedKeys="true">
-        insert into part_time.tb_job_hunter(wx_code, wx_name, img,phone, create_time, state)
-        values (#{wxCode}, #{wxName},#{img}, #{phone}, #{createTime}, #{state})
+        insert into part_time.tb_job_hunter(wx_code, wx_name, img,phone, create_time)
+        values (#{wxCode}, #{wxName},#{img}, #{phone}, #{createTime})
     </insert>
 
     <!--通过主键修改数据-->
@@ -94,11 +95,11 @@
             <if test="phone != null and phone != ''">
                 phone = #{phone},
             </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
             <if test="createTime != null">
                 create_time = #{createTime},
-            </if>
-            <if test="state != null">
-                state = #{state},
             </if>
         </set>
         where job_hunter_id = #{jobHunterId}
@@ -125,7 +126,7 @@
 
     <update id="setPhone">
         update part_time.tb_job_hunter
-        set phone = #{phone},state=1
+        set phone = #{phone}
         where job_hunter_id = #{jobHunterId}
     </update>
 
@@ -170,7 +171,6 @@
             <if test="endDate != null and endDate != ''">
                 and create_time <![CDATA[<=]]>#{endDate}
             </if>
-            and state=1
         </where>
     </select>
 
@@ -197,7 +197,7 @@
             <if test="endDate != null and endDate != ''">
                 and create_time <![CDATA[<=]]>#{endDate}
             </if>
-            and state=1 order by tb_job_hunter.job_hunter_id
+            order by tb_job_hunter.job_hunter_id
         </where>
        LIMIT #{page}, #{limit}
     </select>
@@ -246,7 +246,7 @@
     </select>
 
     <select id="getNum" resultType="int">
-        select IFNULL(count(job_hunter_id), 0) from part_time.tb_job_hunter where tb_job_hunter.state = 1
+        select IFNULL(count(job_hunter_id), 0) from part_time.tb_job_hunter
     </select>
 
 </mapper>

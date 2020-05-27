@@ -104,8 +104,8 @@ public class TbJobHunterServiceImpl implements TbJobHunterService {
 
     @Override
     public boolean setWxInfo(TbJobHunter tbJobHunter) {
-        int rows = tbJobHunterDao.setWxInfo(tbJobHunter);
-        return rows>0;
+
+        return this.tbJobHunterDao.update(tbJobHunter)>0;
     }
 
 
