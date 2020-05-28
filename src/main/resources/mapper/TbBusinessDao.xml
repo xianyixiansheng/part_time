@@ -277,7 +277,7 @@
                     and creditCode like '%${condition.creditCode}%'
                 </if>
             </if>
-            and state  = 1
+            and state  = 0
         </where>
         LIMIT #{page}, #{limit}
     </select>
@@ -288,31 +288,8 @@
     </select>
 
 
-    <!--通过主键修改数据-->
-    <update id="updateforbidden">
-        update part_time.tb_business
-        <set>
-            <if test="state !=null">
-                state = 2,
-            </if>
-        </set>
-        where business_id = #{businessId}
-    </update>
-
-
-    <!--通过主键修改数据-->
-    <update id="updatepass">
-        update part_time.tb_business
-        <set>
-            <if test="state !=null">
-                state = 1,
-            </if>
-        </set>
-        where business_id = #{businessId}
-    </update>
-
     <select id="getNum" resultType="int">
-        select IFNULL(count(business_id), 0) from part_time.tb_business where tb_business.forbidden = 1
+        select IFNULL(count(business_id), 0) from part_time.tb_business where tb_business.forbidden = 0
     </select>
 
 </mapper>

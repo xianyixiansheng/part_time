@@ -349,7 +349,7 @@
 
     <select id="getNum" resultType="int">
         select IFNULL(count(job_id), 0) from part_time.tb_job,part_time.tb_business
-            where tb_business.business_id= tb_job.businessid and tb_business.forbidden=1
+            where tb_business.business_id= tb_job.businessid and tb_business.forbidden=0
     </select>
 
 </mapper>

@@ -77,20 +77,6 @@ public class TbBusinessController extends  BaseController<TbBusiness>{
         return tbusiness;
     }
 
-    @RequestMapping("updateforbidden")
-    @ResponseBody
-    public boolean  updateforbidden(Integer id){
-        boolean flag=tbBusinessService.updateforbidden(id);
-        return flag;
-    }
-
-    @RequestMapping("updatepass")
-    @ResponseBody
-    public boolean  updatepass(Integer id){
-        boolean flag=tbBusinessService.updatepass(id);
-        return flag;
-    }
-
 
     @RequestMapping("update")
     @ResponseBody
@@ -123,6 +109,15 @@ public class TbBusinessController extends  BaseController<TbBusiness>{
             return tbbusiness;
         }
         return null;
+    }
+
+    @RequestMapping("exitCompanyInfo")
+    @ResponseBody
+    public boolean exitCompanyInfo(TbBusiness tbBusiness){
+        this.tbBusinessService.queryById(tbBusiness.getBusinessId());
+        if (tbBusiness.getEmail()==null)
+            return false;
+        return true;
     }
 
     @RequestMapping("setWxInfo")

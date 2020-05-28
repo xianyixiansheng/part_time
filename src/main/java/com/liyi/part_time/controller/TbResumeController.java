@@ -53,6 +53,16 @@ public class TbResumeController {
         return this.tbResumeService.queryAll(tbResume);
     }
 
+    @RequestMapping("exitResume")
+    @ResponseBody
+    public boolean exitResume(TbResume tbResume){
+        TbResume t = tbResumeService.queryById(tbResume.getJobHunterId());
+        if (t != null)
+           return true;
+        return false;
+    }
+
+
     @RequestMapping("saveResume")
     @ResponseBody
     public TbResume saveResume(TbResume tbResume){
