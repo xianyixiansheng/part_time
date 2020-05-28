@@ -74,6 +74,16 @@
 	        and tb_delivery.interview_time <![CDATA[<]]> now()) or tb_delivery.state=5);
     </select>
 
+    <select id="queryAllwithResumeIdandCancel" resultMap="TbDeliveryMapandBusinessAndJob">
+       select * from tb_delivery,tb_business,tb_job
+        where resume_id = #{resumeId}
+            and remark is not null
+            and tb_delivery.job_id = tb_job.job_id
+	        and tb_delivery.business_id = tb_business.business_id
+	        and ((DATE_SUB(tb_delivery.interview_time,INTERVAL -7 DAY)<![CDATA[>=]]> now()
+	        and tb_delivery.interview_time <![CDATA[<]]> now()) or tb_delivery.state=4);
+    </select>
+
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="TbDeliveryMap">
         select

@@ -163,9 +163,10 @@
             if (obj.event === 'forbidden') {
                 layer.confirm('确定禁用吗？', function (index) {
                     $.post({
-                        url: "tbBusiness/updateforbidden",
+                        url: "tbBusiness/update",
                         data: {
-                            'id': data.businessId
+                            'businessId': data.businessId,
+                            'forbidden':1
                         },
                         success: function (res) {
                             if (res){

@@ -21,6 +21,8 @@ public interface TbDeliveryService extends BaseService<TbDelivery> {
 
     List<TbDelivery> queryAllwithResumeIdandOverTime(Integer resumeId);
 
+    List<TbDelivery> queryAllwithResumeIdandCancel(Integer resumeId);
+
     TbDelivery updateStatewithDelivery(TbDelivery tbDelivery);
 
     DeliveryVO queryforEnd(Integer id);

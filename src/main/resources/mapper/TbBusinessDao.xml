@@ -28,8 +28,7 @@
 
     <!-- 关联的外键的ResultMap -->
     <resultMap  id="TbBusinessMapWithFK" type="com.liyi.part_time.entity.TbBusiness" extends="TbBusinessMap">
-        <collection property="tbJob" resultMap="com.liyi.part_time.dao.TbJobDao.TbJobMap">
-        </collection>
+        <collection property="tbJob" resultMap="com.liyi.part_time.dao.TbJobDao.TbJobMap"></collection>
     </resultMap>
 
     <!--查询单个-->
@@ -125,6 +124,9 @@
             <if test="businessWxName != null and businessWxName != ''">
                 business_wxName = #{businessWxName},
             </if>
+            <if test="businessName != null and businessName != ''">
+                business_name = #{businessName},
+            </if>
             <if test="businessImg != null and businessImg != ''">
                 business_img = #{businessImg},
             </if>
@@ -146,8 +148,12 @@
             <if test="license != null">
                 license = #{license},
             </if>
-                state = 1,
-                forbidden = 0,
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="forbidden != null">
+                forbidden = #{forbidden},
+            </if>
             <if test="brief != null and brief != ''">
                 brief = #{brief},
             </if>
@@ -232,10 +238,7 @@
             <if test="telephone != null and telephone != ''">
                 and telephone like '%${telephone}%'
             </if>
-            <if test="state != null and state != ''">
-                and state = #{state}
-            </if>
-            and forbidden  = 0
+            and state  = 0
         </where>
     </select>
 
@@ -254,7 +257,7 @@
                     and creditCode like '%${condition.creditCode}%'
                 </if>
             </if>
-            and forbidden  = 1
+            and state  = 0
         </where>
         LIMIT #{page}, #{limit}
     </select>
@@ -274,7 +277,7 @@
                     and creditCode like '%${condition.creditCode}%'
                 </if>
             </if>
-            and forbidden  = 0
+            and state  = 0
         </where>
         LIMIT #{page}, #{limit}
     </select>
@@ -289,8 +292,8 @@
     <update id="updateforbidden">
         update part_time.tb_business
         <set>
-            <if test="forbidden !=null">
-                forbidden = 2,
+            <if test="state !=null">
+                state = 2,
             </if>
         </set>
         where business_id = #{businessId}
@@ -301,8 +304,8 @@
     <update id="updatepass">
         update part_time.tb_business
         <set>
-            <if test="forbidden !=null">
-                forbidden = 1,
+            <if test="state !=null">
+                state = 1,
             </if>
         </set>
         where business_id = #{businessId}

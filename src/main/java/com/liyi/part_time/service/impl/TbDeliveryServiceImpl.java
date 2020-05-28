@@ -115,6 +115,13 @@ public class TbDeliveryServiceImpl implements TbDeliveryService {
     public List<TbDelivery> queryAllwithResumeIdandOverTime(Integer resumeId) {
         return this.tbDeliveryDao.queryAllwithResumeIdandOverTime(resumeId);
     }
+
+    @Override
+    public List<TbDelivery> queryAllwithResumeIdandCancel(Integer resumeId) {
+        return this.tbDeliveryDao.queryAllwithResumeIdandCancel(resumeId);
+    }
+
+
     @Override
     public TbDelivery updateStatewithDelivery(TbDelivery tbDelivery)
     {

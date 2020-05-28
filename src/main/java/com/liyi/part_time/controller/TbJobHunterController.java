@@ -79,7 +79,6 @@ public class TbJobHunterController extends BaseController<TbJobHunter>{
         if (tojobhunter == null || tojobhunter.getWxName() == null||tojobhunter.getImg()==null||tojobhunter.getSex()==null||tojobhunter.getCreateTime()==null)
             return false;
         boolean flag = tbJobHunterService.setWxInfo(tojobhunter);
-        System.out.println("123");
         return flag;
     }
 

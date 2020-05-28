@@ -26,6 +26,8 @@ public interface TbDeliveryDao extends BaseDao<TbDelivery> {
 
     public List<TbDelivery> queryAllwithResumeIdandOverTime(Integer resumeId);
 
+    public List<TbDelivery> queryAllwithResumeIdandCancel(Integer resumeId);
+
     public int updateStatewithDelivery(TbDelivery tbDelivery);
 
     public DeliveryVO queryforEnd(Integer id);

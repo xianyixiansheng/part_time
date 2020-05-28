@@ -83,6 +83,13 @@ public class TbDeliveryController extends BaseController<TbDelivery> {
         return  tbDeliveryService.queryAllwithResumeIdandOverTime(resumeId);
     }
 
+    @RequestMapping("queryAllwithResumeIdandCancel")
+    @ResponseBody
+    public List<TbDelivery> queryAllwithResumeIdandCancel(Integer resumeId){
+        //通过岗位id判断是否投递过当前岗位
+        return  tbDeliveryService.queryAllwithResumeIdandCancel(resumeId);
+    }
+
     @PostMapping("updateStatewithDelivery")
     @ResponseBody
     public TbDelivery updateStatewithDelivery(TbDelivery tbDelivery) {

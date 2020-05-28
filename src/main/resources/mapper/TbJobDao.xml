@@ -251,7 +251,7 @@
         LIMIT #{start}, #{rows}
     </select>
 
-    <select id="getPageWithFK" resultMap="TbJobMapWithFK">
+    <select id="getPageWithFK" resultMap="TbJobMapWithAll">
          select a.*,b.* from part_time.tb_job a,part_time.tb_business b
         <where>
             <if test="jobName != null and jobName != ''">
