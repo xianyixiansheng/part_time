@@ -89,28 +89,28 @@
     var $ = layui.jquery;
 
         $.ajax({
-            url:"http://localhost:8082/tbJobHunter/getNum",
+            url:"tbJobHunter/getNum",
             success:function(k){
                 $("#jobhunternum").text(k);
             }
         })
 
         $.ajax({
-            url:"http://localhost:8082/tbBusiness/getNum",
+            url:"tbBusiness/getNum",
             success:function(k){
                 $("#businessnum").text(k);
             }
         })
 
         $.ajax({
-            url:"http://localhost:8082/tbJob/getNum",
+            url:"tbJob/getNum",
             success:function(k){
                 $("#jobnum").text(k);
             }
         })
 
         $.ajax({
-            url:"http://localhost:8082/tbFeedback/getNum",
+            url:"tbFeedback/getNum",
             success:function(k){
                 $("#feedbacknum").text(k);
             }

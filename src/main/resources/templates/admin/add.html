@@ -61,7 +61,7 @@
             console.log(data.form);//被执行提交的form对象，一般在存在form标签时才会返回
             console.log(data.field);//当前容器的全部表单字段，名值对形式：{name: value}
             $.ajax({
-                url:'http://47.95.145.12:8082/tbAdmin/add',
+                url:'tbAdmin/add',
                 method:'post',
                 data:data.field,
                 dataType:'JSON',
