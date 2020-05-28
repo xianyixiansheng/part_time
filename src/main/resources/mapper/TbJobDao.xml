@@ -209,7 +209,7 @@
             <if test="endDate != null and endDate != ''">
                 and post_time <![CDATA[<=]]>#{endDate}
             </if>
-            and tb_job.businessid=tb_business.business_id and tb_business.forbidden=1
+            and tb_job.businessid=tb_business.business_id and tb_business.forbidden=0
         </where>
     </select>
 
@@ -232,7 +232,7 @@
                 <if test="endDate != null and endDate != ''">
                     and post_time <![CDATA[<=]]>#{endDate}
                 </if>
-            and tb_job.businessid=tb_business.business_id and tb_business.forbidden=1
+            and tb_job.businessid=tb_business.business_id and tb_business.forbidden=0
         </where>
         LIMIT #{page}, #{limit}
     </select>

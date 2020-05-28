@@ -238,7 +238,7 @@
             <if test="telephone != null and telephone != ''">
                 and telephone like '%${telephone}%'
             </if>
-            and state  = 0
+            and forbidden  = 0
         </where>
     </select>
 
@@ -257,7 +257,7 @@
                     and creditCode like '%${condition.creditCode}%'
                 </if>
             </if>
-            and state  = 0
+            and forbidden  = 0
         </where>
         LIMIT #{page}, #{limit}
     </select>
@@ -277,7 +277,7 @@
                     and creditCode like '%${condition.creditCode}%'
                 </if>
             </if>
-            and state  = 0
+            and state  = 1
         </where>
         LIMIT #{page}, #{limit}
     </select>
