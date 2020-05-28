@@ -114,10 +114,9 @@ public class TbBusinessController extends  BaseController<TbBusiness>{
     @RequestMapping("exitCompanyInfo")
     @ResponseBody
     public boolean exitCompanyInfo(TbBusiness tbBusiness){
-        this.tbBusinessService.queryById(tbBusiness.getBusinessId());
-        if (tbBusiness.getEmail()==null)
-            return false;
-        return true;
+        if (this.tbBusinessService.queryById(tbBusiness.getBusinessId()).getEmail()!=null)
+            return  true;
+        return false;
     }
 
     @RequestMapping("setWxInfo")
